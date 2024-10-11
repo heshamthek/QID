@@ -5,12 +5,22 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
+    /*
+    |--------------------------------------------------------------------------
+    | Register Controller
+    |--------------------------------------------------------------------------
+    |
+    | This controller handles the registration of new users as well as their
+    | validation and creation. By default this controller uses a trait to
+    | provide this functionality without requiring any additional code.
+    |
+    */
+
     use RegistersUsers;
 
     /**
@@ -18,7 +28,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = 'formforpharmacy/form';
 
     /**
      * Create a new controller instance.
@@ -57,26 +67,6 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            // Set the default role, e.g., 0 for users registering as patients or clients
-            'role' => 0,
         ]);
     }
-
-    /**
-     * The user has been registered.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    protected function registered(Request $request, $user)
-    {
-        // Check user role and redirect accordingly
-        if ($user->role == 0) {
-            return redirect()->route('pharmacy.create'); // Redirect to landing page for role 0
-    //     } elseif ($user->role == 1 || $user->role == 2) {
-    //         return redirect()->route('dashboard.pharmacy.create'); // Redirect to pharmacy info form for roles 1 and 2
-    //     }
-    }
-}
 }

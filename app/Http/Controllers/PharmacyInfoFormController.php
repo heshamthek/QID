@@ -1,10 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\PharmacyInfo;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; // Add this for authentication
 use Illuminate\Support\Facades\Storage;
 
 class PharmacyInfoFormController extends Controller
@@ -20,7 +20,6 @@ class PharmacyInfoFormController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required',
             'owner_name' => 'required',
             'location' => 'required',
             'pharmacy_name' => 'required',
@@ -29,18 +28,20 @@ class PharmacyInfoFormController extends Controller
         ]);
 
         $data = $request->all(); // Get all request data
+        $data['user_id'] = auth()->id();
 
-        
         if ($request->hasFile('license_image')) {
             $file = $request->file('license_image');
             $filename = time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('licenses', $filename, 'public'); // Store in 'licenses' folder
-            $data['license_image'] = $path; // Save the path to the data array
+            $data['license_image'] = $path;
         }
 
+        PharmacyInfo::create($data);
 
-        PharmacyInfo::create($data); // Create a new PharmacyInfo record
+        Auth::logout();
 
-        return redirect()->route('auth.login'); // Redirect to the pharmacy index after storing
+        // Redirect with a message after logging out
+return redirect('/login')->with('message', 'Your registration has been submitted. We will contact you soon.');
     }
 }

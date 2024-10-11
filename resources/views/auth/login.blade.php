@@ -1,22 +1,46 @@
 @extends('layouts.app')
 
 @section('content')
-<section class="vh-100" style="background-color: #508bfc;">
-  <div class="container py-5 h-100">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-        <div class="card shadow-2-strong" style="border-radius: 1rem;">
-          <div class="card-body p-5 text-center">
+<div class="container d-flex align-items-center justify-content-center vh-100">
+    <div class="border border-primary rounded p-4" style="width: 500px;">
+        <div class="text-center mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="100%" height="auto" viewBox="0 0 1500 559" preserveAspectRatio="xMidYMid meet">
+                <g data-padding="20">
+                    <g transform="translate(10 11.622)scale(.95842)">
+                        <path fill="#212121" d="M847.344 496.705q-59.4 0-80.19-41.09-41.58-1.48-71.04-24.75-29.45-23.26-29.45-72.27v-159.39q0-50.98 27.97-77.22 27.97-26.23 76.97-26.23 49.01 0 75.98 27.72 26.98 27.72 26.98 76.23v158.89q0 43.07-22.52 66.08-22.52 23.02-57.17 28.96 13.86 16.83 52.47 16.34Zm0-301.95q0-36.14-21.04-54.45-21.04-18.32-55.69-18.32t-55.44 18.32q-20.79 18.31-20.79 54.45v163.35q0 31.68 17.57 49.74 17.58 18.07 46.29 21.04-1.98-11.88-1.98-28.71v-36.13h27.72v35.64q0 20.29 1.48 28.71 28.22-3.47 45.05-21.04t16.83-49.75Z"/>
+                        <rect width="481.2" height="559.35" x="129.184" y="-402.165" fill="none" rx="0" ry="0" transform="translate(402.32 401.99)"/>
+                        <path fill="#0071ff" d="M733.5 234.557a22.542 22.542 0 1 0-22.528 39.04l29.069 16.79 22.542-39.04Zm5.431 51.713L712.461 271a19.42 19.42 0 0 1-9.08-11.87 19.42 19.42 0 0 1 1.956-14.819 19.61 19.61 0 0 1 26.674-7.154l26.47 15.286Zm96.453-44.126a22.54 22.54 0 0 0-30.791-8.25l-29.054 16.79 22.528 39.027 29.054-16.79a22.54 22.54 0 0 0 8.263-30.777m-18.425-4.804c-4.526-.335-8.79 3.826-13.17.876l-.291-.233 2.599-1.49c6.073-3.503 13.242-3.357 19.009-.262-.701 2.336-4.76 1.372-8.147 1.11"/>
+                        <circle cx="253.277" cy="-70.301" r="3.4" fill="#0071ff" transform="translate(398.12 412.77)scale(1.46)"/>
+                        <circle cx="253.277" cy="-72.301" r="2.9" fill="#0071ff" transform="translate(409.88 425.55)scale(1.46)"/>
+                        <circle cx="253.277" cy="-69.401" r="2.9" fill="#0071ff" transform="translate(411.65 404.26)scale(1.46)"/>
+                        <circle cx="253.277" cy="-83.901" r="2.4" fill="#0071ff" transform="translate(395.1 427.8)scale(1.46)"/>
+                        <path fill="#0071ff" d="M773.203 311.82a3.504 3.504 0 1 0 0 7.008 3.504 3.504 0 0 0 0-7.008"/>
+                        <circle cx="253.277" cy="-83.901" r="2.4" fill="#0071ff" transform="translate(385.1 425.28)scale(1.46)"/>
+                        <circle cx="253.277" cy="-83.901" r="2.4" fill="#0071ff" transform="translate(391.27 441.37)scale(1.46)"/>
+                        <circle cx="253.277" cy="-83.901" r="2.4" fill="#0071ff" transform="translate(387.1 405.25)scale(1.46)"/>
+                        <circle cx="253.277" cy="-83.901" r="2.4" fill="#0071ff" transform="translate(396.12 393.73)scale(1.46)"/>
+                    </g>
+                    <path fill="transparent" stroke="transparent" d="M509.5 0h481v559h-481z"/>
+                </g>
+            </svg>
+            <h2>Sign In</h2>
+        </div>
 
-            <h3 class="mb-5">Sign in</h3>
+        <!-- Display session messages -->
+        @if(session('message'))
+            <div class="alert alert-success">{{ session('message') }}</div>
+        @endif
+        @if(session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
 
+        <div class="card-body">
             <form method="POST" action="{{ route('login') }}">
                 @csrf
 
-                <div class="form-outline mb-4">
-                    <input type="email" id="typeEmailX-2" class="form-control form-control-lg @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus />
-                    <label class="form-label" for="typeEmailX-2">Email</label>
-
+                <div class="mb-3">
+                    <label for="email" class="form-label">{{ __('Email Address') }}</label>
+                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
                     @error('email')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
@@ -24,10 +48,9 @@
                     @enderror
                 </div>
 
-                <div class="form-outline mb-4">
-                    <input type="password" id="typePasswordX-2" class="form-control form-control-lg @error('password') is-invalid @enderror" name="password" required autocomplete="current-password" />
-                    <label class="form-label" for="typePasswordX-2">Password</label>
-
+                <div class="mb-3">
+                    <label for="password" class="form-label">{{ __('Password') }}</label>
+                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
                     @error('password')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
@@ -35,31 +58,23 @@
                     @enderror
                 </div>
 
-                <!-- Checkbox -->
-                <div class="form-check d-flex justify-content-start mb-4">
-                    <input class="form-check-input" type="checkbox" name="remember" id="form1Example3" {{ old('remember') ? 'checked' : '' }} />
-                    <label class="form-check-label" for="form1Example3"> Remember password </label>
+                <div class="mb-3 form-check">
+                    <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                    <label class="form-check-label" for="remember">{{ __('Remember Me') }}</label>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-lg btn-block">Login</button>
-
-                <hr class="my-4">
-
-                @if (Route::has('password.request'))
-                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                        {{ __('Forgot Your Password?') }}
-                    </a>
-                @endif
-
+                <div class="mb-0">
+                    <button type="submit" class="btn btn-primary">
+                        {{ __('Login') }}
+                    </button>
+                    @if (Route::has('password.request'))
+                        <a class="btn btn-link" href="{{ route('password.request') }}">
+                            {{ __('Forgot Your Password?') }}
+                        </a>
+                    @endif
+                </div>
             </form>
-
-            <button class="btn btn-lg btn-block btn-primary" style="background-color: #dd4b39;" type="button"><i class="fab fa-google me-2"></i> Sign in with google</button>
-            <button class="btn btn-lg btn-block btn-primary mb-2" style="background-color: #3b5998;" type="button"><i class="fab fa-facebook-f me-2"></i> Sign in with facebook</button>
-
-          </div>
         </div>
-      </div>
     </div>
-  </div>
-</section>
+</div>
 @endsection

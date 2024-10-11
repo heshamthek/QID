@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
@@ -21,24 +20,28 @@ class LoginController extends Controller
     }
 
     /**
-     * Handle a successful login request.
+     * The user has been authenticated.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  mixed  $user
-     * @return \Illuminate\Http\Response
+     * @return mixed
      */
     protected function authenticated(Request $request, $user)
     {
-        // Check the user's status (assuming 'status' is a field in your users table)
-        if ($user->status != 1) { // Adjust the condition as per your status logic
-            Auth::logout(); // Log the user out
-            
-            // Optionally, you can throw a validation exception or redirect
-            throw ValidationException::withMessages([
-                'email' => ['Your account is not active.'],
-            ]);
+        // Check the user's status
+        if ($user->status !== 'accepted') {
+            Auth::logout(); // Log out the user
+
+            // Redirect back with an error message
+            return redirect()->back()->with('error', 'Your account status is ' . $user->status . '. Please contact support.');
         }
 
         return redirect()->intended($this->redirectTo);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        return redirect('/login')->with('message', 'You have been logged out.');
     }
 }

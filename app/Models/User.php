@@ -16,12 +16,12 @@ class User extends Authenticatable
     use Notifiable;
 
     protected $fillable = [
-        'name', 
-        'password', 
-        'email', 
+        'name',
+        'password',
+        'email',
         'is_admin'
     ];
-    
+
     public function orders()
     {
         return $this->hasMany(Order::class);
@@ -31,4 +31,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(PharmacyInfo::class);
     }
+    public function warehouses()
+{
+    return $this->belongsToMany(DrugWarehouse::class, 'user_warehouse', 'user_id', 'warehouse_id');
+}
 }

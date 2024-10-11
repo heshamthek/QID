@@ -14,8 +14,7 @@ class DrugController extends Controller
      */
     public function index()
     {
-        // $drugs = Drug::all();
-        $drugs = Drug::paginate(9); 
+        $drugs = Drug::paginate(9);
         return view('dashboard.drug.index', compact('drugs'));
     }
 
@@ -24,8 +23,10 @@ class DrugController extends Controller
      */
     public function create()
     {
-        $categories = DrugCategory::all(); 
-        $warehouses = DrugWarehouse::all(); 
+        $categories = DrugCategory::all();
+
+        // Get only warehouses associated with the authenticated user
+        $warehouses = auth()->user()->warehouses()->get();
         return view('dashboard.drug.create', compact('categories', 'warehouses'));
     }
 
@@ -42,6 +43,12 @@ class DrugController extends Controller
             'category_id' => 'required|exists:drug_categories,id',
             'warehouse_id' => 'required|exists:drug_warehouses,id',
         ]);
+
+        // Check if the authenticated user is allowed to add drugs to this warehouse
+        $user = auth()->user();
+        if (!$user->warehouses()->where('drug_warehouses.id', $request->warehouse_id)->exists()) {
+            return redirect()->back()->withErrors(['error' => 'You are not allowed to add drugs to this warehouse.']);
+        }
 
         Drug::create($request->only([
             'drug_name',
@@ -70,7 +77,9 @@ class DrugController extends Controller
     public function edit(Drug $drug)
     {
         $categories = DrugCategory::all();
-        $warehouses = DrugWarehouse::all();
+
+        // Get only warehouses associated with the authenticated user
+        $warehouses = auth()->user()->warehouses()->get();
         return view('dashboard.drug.edit', compact('drug', 'categories', 'warehouses'));
     }
 
@@ -87,6 +96,12 @@ class DrugController extends Controller
             'category_id' => 'required|exists:drug_categories,id',
             'warehouse_id' => 'required|exists:drug_warehouses,id',
         ]);
+
+        // Check if the authenticated user is allowed to update this drug in the specified warehouse
+        $user = auth()->user();
+        if (!$user->warehouses()->where('drug_warehouses.id', $request->warehouse_id)->exists()) {
+            return redirect()->back()->withErrors(['error' => 'You are not allowed to update drugs in this warehouse.']);
+        }
 
         $drug->update($request->only([
             'drug_name',

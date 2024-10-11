@@ -5,7 +5,13 @@
     <h2 class="text-2xl font-semibold text-gray-800 pb-4 flex items-center">
         <i class="fas fa-users mr-3"></i> Users
     </h2>
-    
+
+    <!-- Button to Create New User -->
+    <div class="mb-4">
+        <a href="{{ route('dashboard.user.create') }}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Add User
+        </a>
+    </div>
 
     <div class="overflow-x-auto">
         <table class="min-w-full leading-normal">
@@ -24,8 +30,8 @@
                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                         <div class="flex items-center">
                             <div class="flex-shrink-0 w-10 h-10">
-                                <img class="w-full h-full rounded-full" 
-                                     src="https://via.placeholder.com/160" 
+                                <img class="w-full h-full rounded-full"
+                                     src="https://via.placeholder.com/160"
                                      alt="User Image" />
                             </div>
                             <div class="ml-3">
@@ -50,13 +56,10 @@
             </tbody>
         </table>
     </div>
-    <div class=" mt-6">
-        {{ $users->links() }} 
+    <div class="mt-6">
+        {{ $users->links() }}
     </div>
-    
 </div>
-
-
 
 <!-- Delete Confirmation Modal -->
 <div id="deleteModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-50">
