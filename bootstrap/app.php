@@ -12,9 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            // Other middleware...
-            'checkUserStatus' => \App\Http\Middleware\CheckUserStatus::class,
-        ]);
+
+    'admin.access' => \App\Http\Middleware\AdminAccess::class,]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

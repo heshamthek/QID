@@ -29,7 +29,8 @@ class UserController extends Controller
         'name' => 'required|string|max:255',
         'email' => 'required|email|max:255|unique:users,email',
         'password' => 'required|string|min:8|confirmed',
-        'warehouse_id' => 'required|exists:drug_warehouses,id', // Validation for warehouse
+         'is_admin' => 'required|in:0,1,2',
+        'warehouse_id' => 'required|exists:drug_warehouses,id',
     ]);
 
     // Create the user
@@ -37,46 +38,46 @@ class UserController extends Controller
         'name' => $request->name,
         'email' => $request->email,
         'password' => bcrypt($request->password),
+        'is_admin' => $request->is_admin,
         'status' => 'pending',
     ]);
-
-    // Attach the user to the selected warehouse
     $user->warehouses()->attach($request->warehouse_id); // Ensure many-to-many relationship is set up
-
     return redirect()->route('dashboard.user.view')->with('success', 'User created successfully!');
 }
-
-
     public function edit(User $user)
     {
         $warehouses = DrugWarehouse::all();
         return view('dashboard.user.edit', compact('user', 'warehouses'));
     }
 
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:8|confirmed',
-            'warehouse_id' => 'required|exists:drug_warehouses,id',
-        ]);
+   public function update(Request $request, $id)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255|unique:users,email,' . $id,
+        'password' => 'nullable|string|min:8|confirmed',
+        'warehouse_id' => 'required|exists:drug_warehouses,id',
+         'is_admin' => 'required|in:0,1,2',
+        'status' => 'required|string|in:pending,active,inactive',
+    ]);
 
-        $user = User::findOrFail($id);
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
+    $user = User::findOrFail($id);
+    $user->name = $request->input('name');
+    $user->email = $request->input('email');
+    $user->is_admin = $request->input('is_admin');
+    $user->status = $request->input('status');
 
-        if ($request->filled('password')) {
-            $user->password = bcrypt($request->input('password'));
-        }
-
-        $user->save();
-
-        // Update warehouse assignment
-        $user->warehouses()->sync([$request->warehouse_id]);
-
-        return redirect()->route('dashboard.user.view')->with('success', 'User updated successfully.');
+    if ($request->filled('password')) {
+        $user->password = bcrypt($request->input('password'));
     }
+
+    $user->save();
+
+
+    $user->warehouses()->sync([$request->warehouse_id]);
+
+    return redirect()->route('dashboard.user.view')->with('success', 'User updated successfully.');
+}
 
     public function destroy(User $user)
     {

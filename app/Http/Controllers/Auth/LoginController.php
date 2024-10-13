@@ -29,7 +29,7 @@ class LoginController extends Controller
     protected function authenticated(Request $request, $user)
     {
         // Check the user's status
-        if ($user->status !== 'accepted') {
+        if ($user->status !== 'active') {
             Auth::logout(); // Log out the user
 
             // Redirect back with an error message

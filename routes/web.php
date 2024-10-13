@@ -11,8 +11,7 @@ use App\Http\Controllers\PharmacyInfoFormController;
 Route::get('/', function () {
     return view('welcome');
 });
-
-// User routes
+Route::middleware(['auth', 'admin.access'])->group(function () {
 Route::prefix('dashboard/user')->name('dashboard.user.')->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('view');
     Route::get('/user/create', [UserController::class, 'create'])->name('create');
@@ -31,16 +30,6 @@ Route::prefix('dashboard/pharmacy')->group(function () {
     Route::put('/{pharmacyInfo}', [PharmacyInfoController::class, 'update'])->name('dashboard.pharmacy.update');
     Route::delete('/{pharmacyInfo}', [PharmacyInfoController::class, 'destroy'])->name('dashboard.pharmacy.destroy');
 });
-
-// Pharmacy Info Form routes
-Route::middleware(['auth'])->group(function () {
-    // Route to show the form to create pharmacy information
-    Route::get('/formforpharmacy/form', [PharmacyInfoFormController::class, 'create'])->name('pharmacy.create');
-
-    // Route to store the pharmacy information
-    Route::post('/formforpharmacy/store', [PharmacyInfoFormController::class, 'store'])->name('pharmacy.store');
-});
-
 // Drug Category routes
 Route::prefix('dashboard')->group(function () {
     Route::get('drug_categories', [DrugCategoryController::class, 'index'])->name('dashboard.drug_categories.index');
@@ -50,7 +39,6 @@ Route::prefix('dashboard')->group(function () {
     Route::put('drug_categories/{drugCategory}', [DrugCategoryController::class, 'update'])->name('dashboard.drug_categories.update');
     Route::delete('drug_categories/{drugCategory}', [DrugCategoryController::class, 'destroy'])->name('dashboard.drug_categories.destroy');
 });
-
 // Drug Warehouse routes
 Route::prefix('dashboard')->group(function () {
     Route::get('drug_warehouses', [DrugWarehouseController::class, 'index'])->name('dashboard.drug_warehouses.index');
@@ -60,7 +48,6 @@ Route::prefix('dashboard')->group(function () {
     Route::put('drug_warehouses/{drugWarehouse}', [DrugWarehouseController::class, 'update'])->name('dashboard.drug_warehouses.update');
     Route::delete('drug_warehouses/{drugWarehouse}', [DrugWarehouseController::class, 'destroy'])->name('dashboard.drug_warehouses.destroy');
 });
-
 // Drug routes
 Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/drug', [DrugController::class, 'index'])->name('drug.index');
@@ -70,7 +57,7 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::put('/drug/{drug}', [DrugController::class, 'update'])->name('drug.update');
     Route::delete('/drug/{drug}', [DrugController::class, 'destroy'])->name('drug.destroy');
 });
-
+});
 // Home route
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
@@ -78,6 +65,13 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Auth::routes();
 
 
-Auth::routes();
+
+Route::middleware(['auth'])->group(function () {
+    // Route to show the form to create pharmacy information
+    Route::get('/formforpharmacy/form', [PharmacyInfoFormController::class, 'create'])->name('pharmacy.create');
+
+    // Route to store the pharmacy information
+    Route::post('/formforpharmacy/store', [PharmacyInfoFormController::class, 'store'])->name('pharmacy.store');
+});
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

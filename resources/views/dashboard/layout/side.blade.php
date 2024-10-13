@@ -70,13 +70,26 @@
 
 <body class="bg-gray-50 font-family-karla flex">
 
+
     <!-- Sidebar -->
-    <aside class="relative bg-sidebar h-screen w-64 hidden sm:block shadow-lg p-4">
-        <div class="p-6">
-            <a href="{{ route('dashboard.pharmacy.index') }}" class="text-gray-800 text-3xl font-semibold uppercase hover:text-gray-500">QID</a>
-        </div>
-        <nav class="text-sidebar text-base font-semibold pt-3">
-            <!-- Users Link -->
+<!-- Sidebar -->
+<aside class="relative bg-sidebar h-screen w-64 hidden sm:block shadow-lg p-4">
+    <div class="p-6">
+        <a href="{{ route('dashboard.pharmacy.index') }}" class="text-gray-800 text-3xl font-semibold uppercase hover:text-gray-500">QID</a>
+    </div>
+    <nav class="text-sidebar text-base font-semibold pt-3">
+
+        @if(auth()->user()->is_admin == 1) <!-- If the user is admin level 1 -->
+            <!-- Add Drug Link -->
+           <a href="{{ route('dashboard.drug.index') }}"
+               class="flex items-center {{ request()->is('dashboard/drug') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
+                <div class="icon-sidebar flex items-center justify-center mr-2">
+                    <i class="fas fa-pills fa-sm"></i> <!-- Drug icon -->
+                </div>
+                <span class="ml-1">Drugs</span>
+            </a>
+
+        @elseif(auth()->user()->is_admin  == 2)
             <a href="{{ route('dashboard.user.view') }}"
                class="flex items-center {{ request()->is('dashboard/user/users') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
                 <div class="icon-sidebar flex items-center justify-center mr-2">
@@ -85,7 +98,6 @@
                 <span class="ml-1">Users</span>
             </a>
 
-            <!-- Pharmacy Link -->
             <a href="{{ route('dashboard.pharmacy.index') }}"
                class="flex items-center {{ request()->is('dashboard/pharmacy') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
                 <div class="icon-sidebar flex items-center justify-center mr-2">
@@ -94,7 +106,6 @@
                 <span class="ml-1">Pharmacy</span>
             </a>
 
-            <!-- Drug Categories Link -->
             <a href="{{ route('dashboard.drug_categories.index') }}"
                class="flex items-center {{ request()->is('dashboard/drug-categories') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
                 <div class="icon-sidebar flex items-center justify-center mr-2">
@@ -103,7 +114,7 @@
                 <span class="ml-1">Drug Categories</span>
             </a>
 
-            <!-- Warehouse Link -->
+
             <a href="{{ route('dashboard.drug_warehouses.index') }}"
                class="flex items-center {{ request()->is('dashboard/drug_warehouses') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
                 <div class="icon-sidebar flex items-center justify-center mr-2">
@@ -112,7 +123,7 @@
                 <span class="ml-1">Warehouse</span>
             </a>
 
-            <!-- Drugs Link -->
+
             <a href="{{ route('dashboard.drug.index') }}"
                class="flex items-center {{ request()->is('dashboard/drug') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
                 <div class="icon-sidebar flex items-center justify-center mr-2">
@@ -120,8 +131,14 @@
                 </div>
                 <span class="ml-1">Drugs</span>
             </a>
-        </nav>
-    </aside>
+
+        @elseif(auth()->user()->is_admin  == 0)
+        @endif
+
+    </nav>
+</aside>
+
+
 
     <!-- Main Content -->
     <div class="w-full flex flex-col h-screen overflow-hidden">
@@ -136,9 +153,15 @@
                 <button x-show="isOpen" @click="isOpen = false" class="h-full w-full absolute right-0 z-0" style="display: none;">
                     <div class="absolute right-0 bg-white text-gray-800 py-2 rounded shadow profile-dropdown">
                         <a href="#" class="block px-4 py-2 account-link">Profile</a>
-                        <a href="#" class="block px-4 py-2 account-link">Settings</a>
-                        <a href="#" class="block px-4 py-2 account-link">Logout</a>
-                    </div>
+                        <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();" class="block px-4 py-2 account-link">
+                                        {{ __('Logout') }}
+                                    </a>
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
+                              </div>
                 </button>
             </div>
         </header>
@@ -165,7 +188,7 @@
         <!-- Root Section -->
         <div class="root">
             <!-- Main Content Goes Here -->
-            @yield('content') 
+            @yield('content')
         </div>
     </div>
 

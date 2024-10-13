@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->boolean('is_admin')->default(0);
+           $table->unsignedTinyInteger('is_admin')->default(0)->comment('0: User, 1: Admin, 2: Superadmin');
             $table->string('status')->default('pending'); // Add this line in the users migration
             $table->string('password');
             $table->rememberToken();
