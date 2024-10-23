@@ -2,8 +2,19 @@
 
 @section('content')
 <div class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="w-full max-w-lg bg-white rounded-lg shadow-lg p-10 m-5">
+    <div class="w-full max-w-full bg-white rounded-lg shadow-lg p-10 m-5">  <!-- Set to max-w-4xl for a wider appearance -->
         <h2 class="text-3xl font-semibold text-center text-gray-800 mb-6">Add User and Assign Warehouse</h2>
+
+        <!-- Display Validation Errors -->
+        @if ($errors->any())
+            <div class="bg-red-100 text-red-700 p-4 rounded mb-4">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         <form action="{{ route('dashboard.user.store') }}" method="POST" class="space-y-6">
             @csrf
@@ -56,6 +67,19 @@
                     @endforeach
                 </select>
                 @error('warehouse_id')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- User Role Selection -->
+            <div class="relative">
+                <label for="is_admin" class="block text-gray-600 text-sm font-medium">User Role</label>
+                <select id="is_admin" name="is_admin" class="p-2 mt-2 block w-full bg-gray-50 border border-gray-300 rounded-lg shadow-sm text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" required>
+                    <option value="0" {{ old('is_admin') == '0' ? 'selected' : '' }}>User</option>
+                    <option value="1" {{ old('is_admin') == '1' ? 'selected' : '' }}>Admin</option>
+                    <option value="2" {{ old('is_admin') == '2' ? 'selected' : '' }}>Super Admin</option>
+                </select>
+                @error('is_admin')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>

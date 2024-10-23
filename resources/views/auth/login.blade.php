@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container d-flex align-items-center justify-content-center vh-100">
-    <div class="border border-primary rounded p-4" style="width: 500px;">
+<div class="container d-flex align-items-center justify-content-center min-vh-100">
+    <div class="border border-primary rounded p-4" style="width: 500px; margin-top: -100px;"> <!-- Adjust margin-top if necessary -->
         <div class="text-center mb-4">
             <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="100%" height="auto" viewBox="0 0 1500 559" preserveAspectRatio="xMidYMid meet">
                 <g data-padding="20">

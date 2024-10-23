@@ -18,14 +18,14 @@
         @import url('https://fonts.googleapis.com/css?family=Karla:400,700&display=swap');
 
         :root {
-            --sidebar-bg: #ffffff; /* Dark Blue Background for the sidebar */
-            --active-nav-link: #3583ff; /* Active nav link color */
-            --nav-item-hover: rgba(75, 141, 248, 0.2); /* Light Blue Hover Effect */
-            --text-sidebar: #000000; /* White text color for sidebar */
-            --icon-bg: #2e2f31; /* Darker background for icons */
-            --icon-color: #ffffff; /* Blue icon color */
-            --main-bg: #F0F4F8; /* Light background color for the main content */
-            --main-text: #000000; /* Dark text color for the main content */
+            --sidebar-bg: #ffffff;
+            --active-nav-link: #7dabf6;
+            --nav-item-hover: rgba(75, 141, 248, 0.2); 
+            --text-sidebar: #000000;
+            --icon-bg: #2e2f31; 
+            --icon-color: #ffffff;
+            --main-bg: #2a2a2b; 
+            --main-text: #000000; 
         }
 
         .font-family-karla {
@@ -71,27 +71,24 @@
 <body class="bg-gray-50 font-family-karla flex">
 
 
-    <!-- Sidebar -->
-<!-- Sidebar -->
 <aside class="relative bg-sidebar h-screen w-64 hidden sm:block shadow-lg p-4">
     <div class="p-6">
-        <a href="{{ route('dashboard.pharmacy.index') }}" class="text-gray-800 text-3xl font-semibold uppercase hover:text-gray-500">QID</a>
+        <a href="{{ route('dashboard') }}" class="text-gray-800 text-3xl font-semibold uppercase hover:text-gray-500">QID</a>
     </div>
     <nav class="text-sidebar text-base font-semibold pt-3">
 
-        @if(auth()->user()->is_admin == 1) <!-- If the user is admin level 1 -->
-            <!-- Add Drug Link -->
+        @if(auth()->user()->is_admin == 1) 
            <a href="{{ route('dashboard.drug.index') }}"
                class="flex items-center {{ request()->is('dashboard/drug') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
                 <div class="icon-sidebar flex items-center justify-center mr-2">
-                    <i class="fas fa-pills fa-sm"></i> <!-- Drug icon -->
+                    <i class="fas fa-pills fa-sm"></i> 
                 </div>
                 <span class="ml-1">Drugs</span>
             </a>
 
         @elseif(auth()->user()->is_admin  == 2)
             <a href="{{ route('dashboard.user.view') }}"
-               class="flex items-center {{ request()->is('dashboard/user/users') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
+               class="flex items-center {{ request()->is('dashboard/user') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
                 <div class="icon-sidebar flex items-center justify-center mr-2">
                     <i class="fas fa-users fa-sm"></i>
                 </div>
@@ -107,7 +104,7 @@
             </a>
 
             <a href="{{ route('dashboard.drug_categories.index') }}"
-               class="flex items-center {{ request()->is('dashboard/drug-categories') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
+               class="flex items-center {{ request()->is('dashboard/categories') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
                 <div class="icon-sidebar flex items-center justify-center mr-2">
                     <i class="fas fa-capsules fa-sm"></i>
                 </div>
@@ -116,7 +113,7 @@
 
 
             <a href="{{ route('dashboard.drug_warehouses.index') }}"
-               class="flex items-center {{ request()->is('dashboard/drug_warehouses') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
+               class="flex items-center {{ request()->is('dashboard/warehouses') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
                 <div class="icon-sidebar flex items-center justify-center mr-2">
                     <i class="fas fa-warehouse fa-sm"></i>
                 </div>
@@ -147,8 +144,8 @@
             <div class="w-1/2"></div>
             <div x-data="{ isOpen: false }" class="relative w-1/2 flex justify-end">
                 <button @click="isOpen = !isOpen"
-                    class="relative z-10 w-12 h-12 rounded-full overflow-hidden border-4 border-gray-400 hover:border-gray-300 focus:border-gray-300 focus:outline-none transition duration-200">
-                    <img src="https://source.unsplash.com/uJ8LNVCBjFQ/400x400" alt="User Image" class="w-full h-full object-cover">
+                    class=" overflow-hidden focus:border-gray-300 focus:outline-none transition duration-200">
+                    <h1>Q</h1>
                 </button>
                 <button x-show="isOpen" @click="isOpen = false" class="h-full w-full absolute right-0 z-0" style="display: none;">
                     <div class="absolute right-0 bg-white text-gray-800 py-2 rounded shadow profile-dropdown">
@@ -166,24 +163,52 @@
             </div>
         </header>
 
-        <!-- Mobile Header -->
-        <div class="sm:hidden flex justify-between items-center bg-white p-4">
+        <div x-data="{ isOpen: false }" class="sm:hidden flex justify-between items-center bg-white p-4">
             <div class="text-gray-800 text-3xl font-semibold uppercase">QID</div>
             <button @click="isOpen = !isOpen" class="p-2 focus:outline-none">
                 <i class="fas fa-bars fa-lg"></i>
             </button>
-        </div>
-        <div x-data="{ isOpen: false }">
-            <div x-show="isOpen" class="absolute bg-white shadow-lg rounded-lg z-50 w-48 mt-2" style="display: none;">
+        
+            <!-- Mobile Navigation -->
+            <div x-show="isOpen"
+                 class="absolute top-16 left-0 bg-white shadow-lg rounded-lg z-50 w-full"
+                 @click.away="isOpen = false"
+                 x-transition:enter="transition ease-out duration-100"
+                 x-transition:enter-start="opacity-0 scale-95"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-75"
+                 x-transition:leave-start="opacity-100 scale-100"
+                 x-transition:leave-end="opacity-0 scale-95">
                 <nav class="flex flex-col">
-                    <a href="{{ route('dashboard.user.view') }}" class="py-2 px-4 hover:bg-gray-200">Users</a>
-                    <a href="{{ route('dashboard.pharmacy.index') }}" class="py-2 px-4 hover:bg-gray-200">Pharmacy</a>
-                    <a href="{{ route('dashboard.drug_categories.index') }}" class="py-2 px-4 hover:bg-gray-200">Drug Categories</a>
-                    <a href="{{ route('dashboard.drug_warehouses.index') }}" class="py-2 px-4 hover:bg-gray-200">Warehouse</a>
-                    <a href="{{ route('dashboard.drug.index') }}" class="py-2 px-4 hover:bg-gray-200">Drugs</a> <!-- New Drugs Link -->
+                    <a href="{{ route('dashboard.user.view') }}" class="py-2 px-4 flex items-center gap-2 hover:bg-gray-200">
+                        <i class="fas fa-user"></i> Users
+                    </a>
+                    <a href="{{ route('dashboard.pharmacy.index') }}" class="py-2 px-4 flex items-center gap-2 hover:bg-gray-200">
+                        <i class="fas fa-clinic-medical"></i> Pharmacy
+                    </a>
+                    <a href="{{ route('dashboard.drug_categories.index') }}" class="py-2 px-4 flex items-center gap-2 hover:bg-gray-200">
+                        <i class="fas fa-pills"></i> Drug Categories
+                    </a>
+                    <a href="{{ route('dashboard.drug_warehouses.index') }}" class="py-2 px-4 flex items-center gap-2 hover:bg-gray-200">
+                        <i class="fas fa-warehouse"></i> Warehouse
+                    </a>
+                    <a href="{{ route('dashboard.drug.index') }}" class="py-2 px-4 flex items-center gap-2 hover:bg-gray-200">
+                        <i class="fas fa-capsules"></i> Drugs
+                    </a>
+                    <a href="{{ route('logout') }}" 
+                       class="py-2 px-4 flex items-center gap-2 hover:bg-gray-200"
+                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
                 </nav>
             </div>
         </div>
+        
+        <!-- Logout Form -->
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+            @csrf
+        </form>
+
 
         <!-- Root Section -->
         <div class="root">

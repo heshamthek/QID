@@ -1,11 +1,11 @@
 @extends('dashboard.layout.side')
 
 @section('content')
-<div class="w-full mt-12 p-6 bg-white rounded-lg shadow-lg">
+<div class="w-full max-w-7xl mx-auto mt-12 p-6 bg-white rounded-lg shadow-lg">
 
-  <h2 class="text-2xl font-semibold text-gray-800 pb-4 flex items-center">
-    <i class="fas fa-pills mr-3"></i> Drugs
-</h2>
+    <h2 class="text-2xl font-semibold text-gray-800 pb-4 flex items-center">
+        <i class="fas fa-pills mr-3"></i> Drugs
+    </h2>
 
     @if (session('success'))
         <div class="mb-4 text-green-600">{{ session('success') }}</div>
@@ -16,8 +16,13 @@
         Add New Drug
     </a>
 
+    <!-- Toggle Content Visibility Button -->
+    <button id="toggleContent" class="mb-4 inline-block bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-md px-4 py-2 transition duration-200">
+        Show/Hide Drugs
+    </button>
+
     <!-- Drugs Table -->
-    <div class="overflow-x-auto">
+    <div id="drugsTable" class="overflow-x-auto">
         <table class="min-w-full leading-normal">
             <thead>
                 <tr>
@@ -38,6 +43,10 @@
                     <td class="py-2 px-4 border-b border-gray-200 bg-white text-sm">{{ $drug->drug_quantity }}</td>
                     <td class="py-2 px-4 border-b border-gray-200 bg-white text-sm">${{ number_format($drug->drug_price, 2) }}</td>
                     <td class="py-2 px-4 border-b border-gray-200 bg-white text-sm flex space-x-2">
+                        <!-- View Button with Icon -->
+                        <a href="{{ route('dashboard.drug.show', $drug->id) }}" class="text-green-600 hover:text-green-700">
+                            <i class="fas fa-eye"></i> 
+                        </a>
                         <!-- Edit Button with Icon -->
                         <a href="{{ route('dashboard.drug.edit', $drug->id) }}" class="text-blue-600 hover:text-blue-700">
                             <i class="fas fa-edit"></i>
@@ -56,9 +65,11 @@
             </tbody>
         </table>
     </div>
-    <div class=" mt-6">
-      {{ $drugs->links() }} 
-  </div>
+    
+    <div class="mt-6">
+        {{ $drugs->links() }} 
+    </div>
+
     <!-- Delete Confirmation Modal -->
     <div id="deleteModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg shadow-lg p-6 w-11/12 sm:w-1/3">
@@ -103,6 +114,16 @@
 
             document.body.appendChild(form);
             form.submit(); // Submit the form to delete the drug
+        });
+
+        // Toggle visibility of the drugs table
+        document.getElementById('toggleContent').addEventListener('click', function() {
+            const table = document.getElementById('drugsTable');
+            if (table.classList.contains('hidden')) {
+                table.classList.remove('hidden');
+            } else {
+                table.classList.add('hidden');
+            }
         });
     </script>
 </div>

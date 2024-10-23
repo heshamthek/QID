@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="w-full max-w-lg bg-white rounded-lg shadow-lg p-10 m-5">
+    <div class="w-full max-w-full bg-white rounded-lg shadow-lg p-10 m-5">
         <h2 class="text-3xl font-semibold text-center text-gray-800 mb-6">Edit Drug Info</h2>
         
         <form action="{{ route('dashboard.drug.update', $drug->id) }}" method="POST" class="space-y-6">

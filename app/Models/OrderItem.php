@@ -20,6 +20,8 @@ class OrderItem extends Model
     public function drug()
     {
         return $this->belongsTo(Drug::class);
-    }
+    }   
+    
+
 }
 
