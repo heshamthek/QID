@@ -87,9 +87,14 @@
 
             <!-- Submit Button -->
             <div class="text-center">
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg py-3 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    Add Drug Info
-                </button>
+                <button type="submit" 
+    class="w-full text-white font-semibold rounded-lg py-3 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#51eaea]" 
+    style="background-color: #51eaea;" 
+    onmouseover="this.style.backgroundColor='#38d1d1';" 
+    onmouseout="this.style.backgroundColor='#51eaea';">
+    Submit
+</button>
+
             </div>
         </form>
     </div>

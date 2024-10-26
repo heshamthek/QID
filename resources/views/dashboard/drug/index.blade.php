@@ -11,15 +11,16 @@
         <div class="mb-4 text-green-600">{{ session('success') }}</div>
     @endif
 
+
+    
+   
     <!-- Add New Drug Button -->
     <a href="{{ route('dashboard.drug.create') }}" class="mb-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md px-4 py-2 transition duration-200">
         Add New Drug
     </a>
 
     <!-- Toggle Content Visibility Button -->
-    <button id="toggleContent" class="mb-4 inline-block bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-md px-4 py-2 transition duration-200">
-        Show/Hide Drugs
-    </button>
+    
 
     <!-- Drugs Table -->
     <div id="drugsTable" class="overflow-x-auto">

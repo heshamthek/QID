@@ -19,12 +19,12 @@
 
         :root {
             --sidebar-bg: #ffffff;
-            --active-nav-link: #7dabf6;
-            --nav-item-hover: rgba(75, 141, 248, 0.2); 
+            --active-nav-link: #51eaea;
+            --nav-item-hover: #51eaea77; 
             --text-sidebar: #000000;
             --icon-bg: #2e2f31; 
             --icon-color: #ffffff;
-            --main-bg: #2a2a2b; 
+            --main-bg: #e2e2e2;; 
             --main-text: #000000; 
         }
 

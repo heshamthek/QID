@@ -9,12 +9,12 @@ use App\Http\Controllers\DrugController;
 use App\Http\Controllers\PharmacyInfoFormController;
 use App\Http\Controllers\ChartsController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 // Admin middleware protected routes
 Route::middleware(['auth', 'admin.access'])->group(function () {
+
+    
+    
     // Dashboard route
     Route::get('/dashboard', [ChartsController::class, 'index'])->name('dashboard');
 
@@ -68,16 +68,18 @@ Route::middleware(['auth', 'admin.access'])->group(function () {
         Route::delete('/{drug}', [DrugController::class, 'destroy'])->name('destroy');
         Route::get('/{drug}/view', [DrugController::class, 'show'])->name('show');
     });
+
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 });
 
-// Home route
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-// Authentication routes
+    Route::get('/', function () {
+        return view('landing');
+    });
 Auth::routes();
 
 // Routes for pharmacy information form
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard/pharmacy/form', [PharmacyInfoFormController::class, 'create'])->name('pharmacy.create');
-    Route::post('/dashboard/pharmacy/store', [PharmacyInfoFormController::class, 'store'])->name('pharmacy.store');
+    Route::get('/pharmacy/form', [PharmacyInfoFormController::class, 'create'])->name('pharmacy.create');
+    Route::post('/pharmacy/store', [PharmacyInfoFormController::class, 'store'])->name('pharmacy.store');
 });

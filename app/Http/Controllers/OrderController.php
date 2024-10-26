@@ -10,7 +10,7 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::all();
+        $orders = Order::with('user', 'orderItems')->get(); // Eager load related models
         return view('orders.index', compact('orders'));
     }
 
@@ -24,12 +24,12 @@ class OrderController extends Controller
     {
         $request->validate([
             'user_id' => 'required',
-            'order_date' => 'required',
+            'order_date' => 'required|date', // Ensuring the date is in the correct format
         ]);
 
         Order::create($request->all());
 
-        return redirect()->route('orders.index');
+        return redirect()->route('orders.index')->with('success', 'Order created successfully.');
     }
 
     public function show(Order $order)
@@ -47,17 +47,17 @@ class OrderController extends Controller
     {
         $request->validate([
             'user_id' => 'required',
-            'order_date' => 'required',
+            'order_date' => 'required|date',
         ]);
 
         $order->update($request->all());
 
-        return redirect()->route('orders.index');
+        return redirect()->route('orders.index')->with('success', 'Order updated successfully.');
     }
 
     public function destroy(Order $order)
     {
         $order->delete();
-        return redirect()->route('orders.index');
+        return redirect()->route('orders.index')->with('success', 'Order deleted successfully.');
     }
 }

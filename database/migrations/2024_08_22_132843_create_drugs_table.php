@@ -15,6 +15,7 @@ class CreateDrugsTable extends Migration
             $table->text('side_effects')->nullable();
             $table->decimal('drug_price', 10, 2);
             $table->integer('drug_quantity');
+            $table->string('image_path')->nullable(); 
             $table->foreignId('category_id')->constrained('drug_categories')->onDelete('cascade');
             $table->foreignId('warehouse_id')->constrained('drug_warehouses')->onDelete('cascade');
             $table->timestamps();
