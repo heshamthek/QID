@@ -17,6 +17,7 @@ class DrugController extends Controller
         'drug_quantity',
         'category_id',
         'warehouse_id',
+        'image_path',
     ];
 
     /**
@@ -42,26 +43,33 @@ class DrugController extends Controller
      * Store a newly created drug in storage.
      */
     public function store(Request $request)
-    {
-        $request->validate($this->validationRules());
+{
+    // Validate the incoming request data
+    $request->validate($this->validationRules());
 
-        // Check if the authenticated user is allowed to add drugs to this warehouse
-        if (!$this->isUserAllowedToEditWarehouse($request->warehouse_id)) {
-            return redirect()->back()->withErrors(['error' => 'You are not allowed to add drugs to this warehouse.']);
-        }
-
-        // Handle the image upload
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('images/drugs', 'public'); // Store in 'public/images/drugs'
-        }
-
-        Drug::create(array_merge($request->only($this->fillableFields), [
-            'image_path' => $imagePath, // Add the image path to the drug creation
-        ]));
-
-        return redirect()->route('dashboard.drug.index')->with('success', 'Drug added successfully.');
+    // Check if the authenticated user is allowed to add drugs to this warehouse
+    if (!$this->isUserAllowedToEditWarehouse($request->warehouse_id)) {
+        return redirect()->back()->withErrors(['error' => 'You are not allowed to add drugs to this warehouse.']);
     }
+
+    // Initialize imagePath to null
+    $imagePath = null;
+
+    // Check if the request contains a file for the image
+    if ($request->hasFile('image')) {
+        // Store the uploaded image in the 'public/drugs' directory and get the path
+        $imagePath = $request->file('image')->store('drugs', 'public'); 
+    }
+
+    // Create a new drug entry in the database, including the image path
+    Drug::create(array_merge($request->only($this->fillableFields), [
+        'image_path' => $imagePath, // Store the relative image path
+    ]));
+
+    // Redirect back to the drug index with a success message
+    return redirect()->route('dashboard.drug.index')->with('success', 'Drug added successfully.');
+}
+
 
     /**
      * Display the specified drug.
@@ -124,11 +132,12 @@ class DrugController extends Controller
         return [
             'drug_name' => 'required|string|max:255',
             'drug_description' => 'required|string',
+            'side_effects' => 'required|string',
             'drug_price' => 'required|numeric',
             'drug_quantity' => 'required|integer',
             'category_id' => 'required|exists:drug_categories,id',
             'warehouse_id' => 'required|exists:drug_warehouses,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Add image validation
+            'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
         ];
     }
 

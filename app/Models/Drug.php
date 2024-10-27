@@ -11,13 +11,14 @@ class Drug extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'drug_name', 
-        'drug_description', 
-        'side_effects', 
-        'drug_price', 
-        'drug_quantity', 
-        'category_id', 
-        'warehouse_id'
+        'drug_name',
+        'drug_description',
+        'side_effects',
+        'drug_price',
+        'drug_quantity',
+        'category_id',
+        'warehouse_id',
+        'image_path',
     ];
 
     public function category()

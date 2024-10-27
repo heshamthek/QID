@@ -11,56 +11,50 @@
         <div class="mb-4 text-green-600">{{ session('success') }}</div>
     @endif
 
-
-    
-   
     <!-- Add New Drug Button -->
-    <a href="{{ route('dashboard.drug.create') }}" class="mb-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md px-4 py-2 transition duration-200">
+    <a href="{{ route('dashboard.drug.create') }}" class="mb-4 inline-block bg-blue-800 hover:bg-blue-700 text-white font-semibold rounded-md px-4 py-2 transition duration-200">
         Add New Drug
     </a>
 
-    <!-- Toggle Content Visibility Button -->
-    
-
     <!-- Drugs Table -->
     <div id="drugsTable" class="overflow-x-auto">
-        <table class="min-w-full leading-normal">
-            <thead>
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Description</th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quantity</th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Price</th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                    <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">ID</th>
+                    <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Name</th>
+                    <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Description</th>
+                    <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Quantity</th>
+                    <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Price</th>
+                    <th class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-gray-200">
                 @forelse ($drugs as $drug)
                 <tr>
-                    <td class="py-2 px-4 border-b border-gray-200 bg-white text-sm">{{ $drug->id }}</td>
-                    <td class="py-2 px-4 border-b border-gray-200 bg-white text-sm">{{ $drug->drug_name }}</td>
-                    <td class="py-2 px-4 border-b border-gray-200 bg-white text-sm">{{ $drug->drug_description }}</td>
-                    <td class="py-2 px-4 border-b border-gray-200 bg-white text-sm">{{ $drug->drug_quantity }}</td>
-                    <td class="py-2 px-4 border-b border-gray-200 bg-white text-sm">${{ number_format($drug->drug_price, 2) }}</td>
-                    <td class="py-2 px-4 border-b border-gray-200 bg-white text-sm flex space-x-2">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ $drug->id }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ $drug->drug_name }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ $drug->drug_description }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ $drug->drug_quantity }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${{ number_format($drug->drug_price, 2) }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
                         <!-- View Button with Icon -->
-                        <a href="{{ route('dashboard.drug.show', $drug->id) }}" class="text-green-600 hover:text-green-700">
+                        <a href="{{ route('dashboard.drug.show', $drug->id) }}" class="text-blue-600 hover:text-blue-800">
                             <i class="fas fa-eye"></i> 
                         </a>
                         <!-- Edit Button with Icon -->
-                        <a href="{{ route('dashboard.drug.edit', $drug->id) }}" class="text-blue-600 hover:text-blue-700">
+                        <a href="{{ route('dashboard.drug.edit', $drug->id) }}" class="text-blue-600 hover:text-blue-800 mx-2">
                             <i class="fas fa-edit"></i>
                         </a>
                         <!-- Delete Button with Icon -->
-                        <button class="text-red-600 hover:text-red-700" onclick="openDeleteModal({{ $drug->id }})">
+                        <button class="text-red-600 hover:text-red-800" onclick="openDeleteModal({{ $drug->id }})">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="py-2 px-4 border-b text-center">No drugs found.</td>
+                    <td colspan="6" class="py-2 px-4 text-center text-sm text-gray-600">No drugs found.</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -78,7 +72,7 @@
             <p class="mt-2">Are you sure you want to delete this drug entry?</p>
             <div class="mt-4 flex justify-end">
                 <button class="bg-gray-300 hover:bg-gray-400 text-black rounded-lg px-4 py-2" onclick="closeDeleteModal()">Cancel</button>
-                <button id="confirmDelete" class="bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-2 ml-2">Delete</button>
+                <button id="confirmDelete" class="bg-red-800 hover:bg-red-700 text-white rounded-lg px-4 py-2 ml-2">Delete</button>
             </div>
         </div>
     </div>

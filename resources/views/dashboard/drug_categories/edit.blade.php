@@ -20,10 +20,14 @@
 
             <!-- Submit Button -->
             <div class="text-center">
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg py-3 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    Update Category
+                <button type="submit" 
+                    class="w-full text-white font-semibold rounded-lg py-3 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-600" 
+                    style="background-color: #007bff;" 
+                    onmouseover="this.style.backgroundColor='#0056b3';" 
+                    onmouseout="this.style.backgroundColor='#007bff';">
+                    Submit
                 </button>
-            </div>
+                </div>
         </form>
     </div>
 </div>

@@ -19,7 +19,7 @@ class CreateDrugsTable extends Migration
             $table->foreignId('category_id')->constrained('drug_categories')->onDelete('cascade');
             $table->foreignId('warehouse_id')->constrained('drug_warehouses')->onDelete('cascade');
             $table->timestamps();
-            $table->softDeletes();  // Soft delete column
+            $table->softDeletes();  
         });
     }
 

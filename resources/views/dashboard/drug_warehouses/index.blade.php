@@ -5,23 +5,23 @@
     <h2 class="text-2xl font-semibold text-gray-800 pb-4 flex items-center">
         <i class="fas fa-warehouse mr-3"></i> Drug Warehouses
     </h2>
-    
+
     <!-- Create Drug Warehouse Button -->
     <a href="{{ route('dashboard.drug_warehouses.create') }}" class="mb-4 inline-block bg-blue-600 hover:bg-blue-800 text-white font-semibold rounded-md px-4 py-2 transition duration-200">
-      Create Drug Warehouse
-  </a>
+        Create Drug Warehouse
+    </a>
 
     <div class="overflow-x-auto">
         <table class="min-w-full leading-normal">
             <thead>
                 <tr>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th class="px-5 py-4 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                         Warehouse Name
                     </th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th class="px-5 py-4 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                         Logo
                     </th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th class="px-5 py-4 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                         Actions
                     </th>
                 </tr>
@@ -29,21 +29,23 @@
             <tbody>
                 @foreach($warehouses as $warehouse)
                 <tr>
-                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <td class="px-5 py-4 border-b border-gray-200 bg-white text-sm">
                         {{ $warehouse->warehouse_name }}
                     </td>
-                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <td class="px-5 py-4 border-b border-gray-200 bg-white text-sm">
                         <div class="flex items-center">
                             <div class="flex-shrink-0 w-10 h-10">
                                 @if ($warehouse->logo)
-                                    <img class="w-full h-full rounded-full object-cover" src="{{ asset('storage/' . $warehouse->logo) }}" alt="Warehouse Logo" />
+                                <img class="w-full h-full rounded-full object-cover" 
+                                     src="{{ asset('storage/' . $warehouse->logo) }}" 
+                                     alt="Warehouse Logo" />                         
                                 @else
                                     <span class="text-gray-500">No Logo</span>
                                 @endif
                             </div>
                         </div>
                     </td>
-                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm flex space-x-2">
+                    <td class="px-5 py-4 border-b border-gray-200 bg-white text-sm flex space-x-2">
                         <a href="{{ route('dashboard.drug_warehouses.edit', $warehouse->id) }}" class="text-blue-500 hover:text-blue-700">
                             <i class="fas fa-edit"></i>
                         </a>

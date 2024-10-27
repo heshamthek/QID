@@ -129,6 +129,7 @@
                 <span class="ml-1">Drugs</span>
             </a>
 
+            <a href="{{ route('dashboard.orders.index') }}"class="flex items-center {{ request()->is('dashboard/orders') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm"><div class="icon-sidebar flex items-center justify-center mr-2"><i class="fas fa-receipt fa-sm"></i> <!-- Order icon --></div><span class="ml-1">Orders</span></a>
         @elseif(auth()->user()->is_admin  == 0)
         @endif
 
@@ -192,14 +193,18 @@
                     <a href="{{ route('dashboard.drug_warehouses.index') }}" class="py-2 px-4 flex items-center gap-2 hover:bg-gray-200">
                         <i class="fas fa-warehouse"></i> Warehouse
                     </a>
-                    <a href="{{ route('dashboard.drug.index') }}" class="py-2 px-4 flex items-center gap-2 hover:bg-gray-200">
+                    <a href="{{ route('dashboard.orders.index') }}" class="py-2 px-4 flex items-center gap-2 hover:bg-gray-200">
                         <i class="fas fa-capsules"></i> Drugs
+                    </a>
+                    <a href="{{ route('dashboard.drug.index') }}" class="py-2 px-4 flex items-center gap-2 hover:bg-gray-200">
+                        <i class="fas fa-receipt"></i> Drugs
                     </a>
                     <a href="{{ route('logout') }}" 
                        class="py-2 px-4 flex items-center gap-2 hover:bg-gray-200"
                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </a>
+
                 </nav>
             </div>
         </div>
@@ -221,3 +226,6 @@
 </body>
 
 </html>
+
+
+

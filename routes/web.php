@@ -8,7 +8,7 @@ use App\Http\Controllers\DrugWarehouseController;
 use App\Http\Controllers\DrugController;
 use App\Http\Controllers\PharmacyInfoFormController;
 use App\Http\Controllers\ChartsController;
-
+use App\Http\Controllers\OrderItemController;
 
 // Admin middleware protected routes
 Route::middleware(['auth', 'admin.access'])->group(function () {
@@ -70,6 +70,12 @@ Route::middleware(['auth', 'admin.access'])->group(function () {
     });
 
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+
+
+// Order Items Routes
+Route::get('/dashboard/orders', [OrderItemController::class, 'index'])->name('dashboard.orders.index');
+
 });
 
 
