@@ -83,7 +83,7 @@
         form.appendChild(methodInput);
 
         document.body.appendChild(form);
-        form.submit(); // Submit the form
+        form.submit(); 
     });
 </script>
 

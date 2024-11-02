@@ -9,6 +9,8 @@ use App\Http\Controllers\DrugController;
 use App\Http\Controllers\PharmacyInfoFormController;
 use App\Http\Controllers\ChartsController;
 use App\Http\Controllers\OrderItemController;
+use App\Http\Controllers\ShopController;
+use App\Http\Controllers\CartController;
 
 // Admin middleware protected routes
 Route::middleware(['auth', 'admin.access'])->group(function () {
@@ -68,24 +70,31 @@ Route::middleware(['auth', 'admin.access'])->group(function () {
         Route::delete('/{drug}', [DrugController::class, 'destroy'])->name('destroy');
         Route::get('/{drug}/view', [DrugController::class, 'show'])->name('show');
     });
-
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-
-
-// Order Items Routes
-Route::get('/dashboard/orders', [OrderItemController::class, 'index'])->name('dashboard.orders.index');
+    Route::get('/dashboard/orders', [OrderItemController::class, 'index'])->name('dashboard.orders.index');
 
 });
 
 
     Route::get('/', function () {
         return view('landing');
-    });
+    })->name('home');
+    
+
+    Route::get('/shop', [ShopController::class, 'index'])->name('websitelayout.Shop');
 Auth::routes();
 
-// Routes for pharmacy information form
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/pharmacy/form', [PharmacyInfoFormController::class, 'create'])->name('pharmacy.create');
     Route::post('/pharmacy/store', [PharmacyInfoFormController::class, 'store'])->name('pharmacy.store');
+});
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
+    Route::patch('/cart/update/{item}', [CartController::class, 'updateCart'])->name('cart.update'); // Make sure this is correct
+    Route::post('/cart/remove/{itemId}', [CartController::class, 'removeItem'])->name('cart.remove');
+    Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('cart.clear');
 });

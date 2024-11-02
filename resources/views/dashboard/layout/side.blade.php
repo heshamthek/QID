@@ -1,231 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pharmacy Admin Dashboard</title>
-    <meta name="author" content="David Grzyb">
-    <meta name="description" content="Admin Dashboard Template">
-
+    <title>QID Dashboard</title>
+    
     <!-- Tailwind CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
     <!-- Font Awesome -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
-        integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    
+    <!-- Alpine.js -->
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+    
     <style>
-        @import url('https://fonts.googleapis.com/css?family=Karla:400,700&display=swap');
-
-        :root {
-            --sidebar-bg: #ffffff;
-            --active-nav-link: #51eaea;
-            --nav-item-hover: #51eaea77; 
-            --text-sidebar: #000000;
-            --icon-bg: #2e2f31; 
-            --icon-color: #ffffff;
-            --main-bg: #e2e2e2;; 
-            --main-text: #000000; 
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f3f4f6;
         }
-
-        .font-family-karla {
-            font-family: 'Karla', sans-serif;
-        }
-
-        .bg-sidebar {
-            background: var(--sidebar-bg);
-        }
-
-        .active-nav-link {
-            background: var(--active-nav-link);
-            border-radius: 12px;
-        }
-
-        .nav-item:hover {
-            background: var(--nav-item-hover);
-            border-radius: 12px;
-        }
-
-        .text-sidebar {
-            color: var(--text-sidebar);
-            font-weight: 600;
-        }
-
-        .icon-sidebar {
-            background: var(--icon-bg);
-            color: var(--icon-color);
-            padding: 10px;
-            border-radius: 50%;
-        }
-
-        .root {
-            padding: 20px;
-            background: var(--main-bg);
-            color: var(--main-text);
-            flex: 1;
-            overflow-y: auto;
-        }
+        .bg-sidebar { background: #ffffff; }
+        .cta-btn { color: #3d68ff; }
+        .upgrade-btn { background: #1947ee; }
+        .upgrade-btn:hover { background: #0038fd; }
+        .active-nav-link { background: #e0e7ff; color: #3d68ff; }
+        .nav-item:hover { background: #e0e7ff; color: #3d68ff; }
+        .account-link:hover { background: #3d68ff; color: #ffffff; }
     </style>
 </head>
+<body class="text-gray-800 flex">
 
-<body class="bg-gray-50 font-family-karla flex">
-
-
-<aside class="relative bg-sidebar h-screen w-64 hidden sm:block shadow-lg p-4">
-    <div class="p-6">
-        <a href="{{ route('dashboard') }}" class="text-gray-800 text-3xl font-semibold uppercase hover:text-gray-500">QID</a>
-    </div>
-    <nav class="text-sidebar text-base font-semibold pt-3">
-
-        @if(auth()->user()->is_admin == 1) 
-           <a href="{{ route('dashboard.drug.index') }}"
-               class="flex items-center {{ request()->is('dashboard/drug') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
-                <div class="icon-sidebar flex items-center justify-center mr-2">
-                    <i class="fas fa-pills fa-sm"></i> 
+    <aside class="relative bg-sidebar h-screen w-64 hidden sm:block shadow-xl">
+        <div class="p-6">
+            <a href="{{ route('dashboard') }}" class="text-gray-800 text-3xl font-semibold uppercase hover:text-blue-500 transition-colors duration-300">QID</a>
+        </div>
+        <nav class="text-gray-600 text-base font-semibold pt-3">
+            <!-- Search Bar -->
+            <div class="px-4 mb-6">
+                <div class="relative">
+                    <input type="text" class="w-full py-2 pl-10 pr-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors duration-300" placeholder="Search...">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <svg class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none">
+                            <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </div>
                 </div>
-                <span class="ml-1">Drugs</span>
-            </a>
+            </div>
 
-        @elseif(auth()->user()->is_admin  == 2)
-            <a href="{{ route('dashboard.user.view') }}"
-               class="flex items-center {{ request()->is('dashboard/user') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
-                <div class="icon-sidebar flex items-center justify-center mr-2">
-                    <i class="fas fa-users fa-sm"></i>
-                </div>
-                <span class="ml-1">Users</span>
-            </a>
+            <!-- Navigation Items -->
+            @php
+                $currentRoute = Route::currentRouteName();
+            @endphp
+            @if(auth()->user()->is_admin == 1)
+                <a href="{{ route('dashboard.drug.index') }}" class="flex items-center text-gray-600 py-4 pl-6 nav-item {{ $currentRoute == 'dashboard.drug.index' ? 'active-nav-link' : '' }} transition-all duration-300 ease-in-out">
+                    <i class="fas fa-pills mr-3"></i>
+                    Drugs
+                </a>
+            @elseif(auth()->user()->is_admin == 2)
+                <a href="{{ route('dashboard.user.view') }}" class="flex items-center text-gray-600 py-4 pl-6 nav-item {{ $currentRoute == 'dashboard.user.view' ? 'active-nav-link' : '' }} transition-all duration-300 ease-in-out">
+                    <i class="fas fa-users mr-3"></i>
+                    Users
+                </a>
+                <a href="{{ route('dashboard.pharmacy.index') }}" class="flex items-center text-gray-600 py-4 pl-6 nav-item {{ $currentRoute == 'dashboard.pharmacy.index' ? 'active-nav-link' : '' }} transition-all duration-300 ease-in-out">
+                    <i class="fas fa-clinic-medical mr-3"></i>
+                    Pharmacy
+                </a>
+                <a href="{{ route('dashboard.drug_categories.index') }}" class="flex items-center text-gray-600 py-4 pl-6 nav-item {{ $currentRoute == 'dashboard.drug_categories.index' ? 'active-nav-link' : '' }} transition-all duration-300 ease-in-out">
+                    <i class="fas fa-capsules mr-3"></i>
+                    Drug Categories
+                </a>
+                <a href="{{ route('dashboard.drug_warehouses.index') }}" class="flex items-center text-gray-600 py-4 pl-6 nav-item {{ $currentRoute == 'dashboard.drug_warehouses.index' ? 'active-nav-link' : '' }} transition-all duration-300 ease-in-out">
+                    <i class="fas fa-warehouse mr-3"></i>
+                    Warehouse
+                </a>
+                <a href="{{ route('dashboard.drug.index') }}" class="flex items-center text-gray-600 py-4 pl-6 nav-item {{ $currentRoute == 'dashboard.drug.index' ? 'active-nav-link' : '' }} transition-all duration-300 ease-in-out">
+                    <i class="fas fa-pills mr-3"></i>
+                    Drugs
+                </a>
+                <a href="{{ route('dashboard.orders.index') }}" class="flex items-center text-gray-600 py-4 pl-6 nav-item {{ $currentRoute == 'dashboard.orders.index' ? 'active-nav-link' : '' }} transition-all duration-300 ease-in-out">
+                    <i class="fas fa-receipt mr-3"></i>
+                    Orders
+                </a>
+            @endif
+        </nav>
+    </aside>
 
-            <a href="{{ route('dashboard.pharmacy.index') }}"
-               class="flex items-center {{ request()->is('dashboard/pharmacy') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
-                <div class="icon-sidebar flex items-center justify-center mr-2">
-                    <i class="fas fa-clinic-medical fa-sm"></i>
-                </div>
-                <span class="ml-1">Pharmacy</span>
-            </a>
-
-            <a href="{{ route('dashboard.drug_categories.index') }}"
-               class="flex items-center {{ request()->is('dashboard/categories') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
-                <div class="icon-sidebar flex items-center justify-center mr-2">
-                    <i class="fas fa-capsules fa-sm"></i>
-                </div>
-                <span class="ml-1">Drug Categories</span>
-            </a>
-
-
-            <a href="{{ route('dashboard.drug_warehouses.index') }}"
-               class="flex items-center {{ request()->is('dashboard/warehouses') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
-                <div class="icon-sidebar flex items-center justify-center mr-2">
-                    <i class="fas fa-warehouse fa-sm"></i>
-                </div>
-                <span class="ml-1">Warehouse</span>
-            </a>
-
-
-            <a href="{{ route('dashboard.drug.index') }}"
-               class="flex items-center {{ request()->is('dashboard/drug') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm">
-                <div class="icon-sidebar flex items-center justify-center mr-2">
-                    <i class="fas fa-pills fa-sm"></i> <!-- Drug icon -->
-                </div>
-                <span class="ml-1">Drugs</span>
-            </a>
-
-            <a href="{{ route('dashboard.orders.index') }}"class="flex items-center {{ request()->is('dashboard/orders') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} py-2 pl-4 nav-item transition-all duration-200 text-sm"><div class="icon-sidebar flex items-center justify-center mr-2"><i class="fas fa-receipt fa-sm"></i> <!-- Order icon --></div><span class="ml-1">Orders</span></a>
-        @elseif(auth()->user()->is_admin  == 0)
-        @endif
-
-    </nav>
-</aside>
-
-
-
-    <!-- Main Content -->
-    <div class="w-full flex flex-col h-screen overflow-hidden">
+    <div class="w-full flex flex-col h-screen overflow-y-hidden">
         <!-- Desktop Header -->
-        <header class="w-full items-center bg-white py-2 px-6 hidden sm:flex">
+        <header class="w-full items-center bg-white py-2 px-6 hidden sm:flex border-b border-gray-200">
             <div class="w-1/2"></div>
             <div x-data="{ isOpen: false }" class="relative w-1/2 flex justify-end">
-                <button @click="isOpen = !isOpen"
-                    class=" overflow-hidden focus:border-gray-300 focus:outline-none transition duration-200">
-                    <h1>Q</h1>
+                <button @click="isOpen = !isOpen" class="relative z-10 w-12 h-12 rounded-full overflow-hidden border-4 border-gray-300 hover:border-gray-400 focus:border-gray-400 focus:outline-none transition-colors duration-300">
+                    <img src="https://source.unsplash.com/uJ8LNVCBjFQ/400x400">
                 </button>
-                <button x-show="isOpen" @click="isOpen = false" class="h-full w-full absolute right-0 z-0" style="display: none;">
-                    <div class="absolute right-0 bg-white text-gray-800 py-2 rounded shadow profile-dropdown">
-                        <a href="#" class="block px-4 py-2 account-link">Profile</a>
-                        <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();" class="block px-4 py-2 account-link">
-                                        {{ __('Logout') }}
-                                    </a>
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
-                              </div>
-                </button>
+                <button x-show="isOpen" @click="isOpen = false" class="h-full w-full fixed inset-0 cursor-default"></button>
+                <div x-show="isOpen" class="absolute w-32 bg-white rounded-lg shadow-lg py-2 mt-16">
+                    <a href="#" class="block px-4 py-2 account-link hover:text-white transition-colors duration-300">Account</a>
+                    <a href="#" class="block px-4 py-2 account-link hover:text-white transition-colors duration-300">Support</a>
+                    <a href="{{ route('logout') }}" class="block px-4 py-2 account-link hover:text-white transition-colors duration-300"
+                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        {{ __('Logout') }}
+                    </a>
+                </div>
             </div>
         </header>
 
-        <div x-data="{ isOpen: false }" class="sm:hidden flex justify-between items-center bg-white p-4">
-            <div class="text-gray-800 text-3xl font-semibold uppercase">QID</div>
-            <button @click="isOpen = !isOpen" class="p-2 focus:outline-none">
-                <i class="fas fa-bars fa-lg"></i>
-            </button>
-        
-            <!-- Mobile Navigation -->
-            <div x-show="isOpen"
-                 class="absolute top-16 left-0 bg-white shadow-lg rounded-lg z-50 w-full"
-                 @click.away="isOpen = false"
-                 x-transition:enter="transition ease-out duration-100"
-                 x-transition:enter-start="opacity-0 scale-95"
-                 x-transition:enter-end="opacity-100 scale-100"
-                 x-transition:leave="transition ease-in duration-75"
-                 x-transition:leave-start="opacity-100 scale-100"
-                 x-transition:leave-end="opacity-0 scale-95">
-                <nav class="flex flex-col">
-                    <a href="{{ route('dashboard.user.view') }}" class="py-2 px-4 flex items-center gap-2 hover:bg-gray-200">
-                        <i class="fas fa-user"></i> Users
-                    </a>
-                    <a href="{{ route('dashboard.pharmacy.index') }}" class="py-2 px-4 flex items-center gap-2 hover:bg-gray-200">
-                        <i class="fas fa-clinic-medical"></i> Pharmacy
-                    </a>
-                    <a href="{{ route('dashboard.drug_categories.index') }}" class="py-2 px-4 flex items-center gap-2 hover:bg-gray-200">
-                        <i class="fas fa-pills"></i> Drug Categories
-                    </a>
-                    <a href="{{ route('dashboard.drug_warehouses.index') }}" class="py-2 px-4 flex items-center gap-2 hover:bg-gray-200">
-                        <i class="fas fa-warehouse"></i> Warehouse
-                    </a>
-                    <a href="{{ route('dashboard.orders.index') }}" class="py-2 px-4 flex items-center gap-2 hover:bg-gray-200">
-                        <i class="fas fa-capsules"></i> Drugs
-                    </a>
-                    <a href="{{ route('dashboard.drug.index') }}" class="py-2 px-4 flex items-center gap-2 hover:bg-gray-200">
-                        <i class="fas fa-receipt"></i> Drugs
-                    </a>
-                    <a href="{{ route('logout') }}" 
-                       class="py-2 px-4 flex items-center gap-2 hover:bg-gray-200"
-                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </a>
-
-                </nav>
+        <!-- Mobile Header & Nav -->
+        <header x-data="{ isOpen: false }" class="w-full bg-sidebar py-5 px-6 sm:hidden">
+            <div class="flex items-center justify-between">
+                <a href="{{ route('dashboard') }}" class="text-gray-800 text-3xl font-semibold uppercase hover:text-blue-500 transition-colors duration-300">QID</a>
+                <button @click="isOpen = !isOpen" class="text-gray-800 text-3xl focus:outline-none">
+                    <i x-show="!isOpen" class="fas fa-bars"></i>
+                    <i x-show="isOpen" class="fas fa-times"></i>
+                </button>
             </div>
+
+            <!-- Mobile Menu -->
+            <nav class="flex flex-col pt-4" x-show="isOpen">
+                <a href="{{ route('dashboard.user.view') }}" class="flex items-center text-gray-600 py-2 pl-4 nav-item transition-colors duration-300">
+                    <i class="fas fa-users mr-3"></i>
+                    Users
+                </a>
+                <a href="{{ route('dashboard.pharmacy.index') }}" class="flex items-center text-gray-600 py-2 pl-4 nav-item transition-colors duration-300">
+                    <i class="fas fa-clinic-medical mr-3"></i>
+                    Pharmacy
+                </a>
+                <a href="{{ route('dashboard.drug_categories.index') }}" class="flex items-center text-gray-600 py-2 pl-4 nav-item transition-colors duration-300">
+                    <i class="fas fa-capsules mr-3"></i>
+                    Drug Categories
+                </a>
+                <a href="{{ route('dashboard.drug_warehouses.index') }}" class="flex items-center text-gray-600 py-2 pl-4 nav-item transition-colors duration-300">
+                    <i class="fas fa-warehouse mr-3"></i>
+                    Warehouse
+                </a>
+                <a href="{{ route('dashboard.drug.index') }}" class="flex items-center text-gray-600 py-2 pl-4 nav-item transition-colors duration-300">
+                    <i class="fas fa-pills mr-3"></i>
+                    Drugs
+                </a>
+                <a href="{{ route('dashboard.orders.index') }}" class="flex items-center text-gray-600 py-2 pl-4 nav-item transition-colors duration-300">
+                    <i class="fas fa-receipt mr-3"></i>
+                    Orders
+                </a>
+                <a href="{{ route('logout') }}" class="flex items-center text-gray-600 py-2 pl-4 nav-item transition-colors duration-300"
+                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    {{ __('Logout') }}
+                </a>
+            </nav>
+        </header>
+    
+        <div class="w-full overflow-x-hidden border-t flex flex-col">
+            <main class="w-full flex-grow p-6">
+                <!-- Page Content -->
+                @yield('content')
+            </main>
         </div>
         
-        <!-- Logout Form -->
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
-            @csrf
-        </form>
-
-
-        <!-- Root Section -->
-        <div class="root">
-            <!-- Main Content Goes Here -->
-            @yield('content')
-        </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.2.2/cdn.min.js" defer></script>
+    <!-- Logout Form -->
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
+
+    <!-- Additional Scripts -->
+    <script>
+        // You can add any additional JavaScript here
+    </script>
 </body>
-
 </html>
-
-
-

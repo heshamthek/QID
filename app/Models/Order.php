@@ -10,14 +10,14 @@ class Order extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['user_id', 'order_date' ];
+    protected $fillable = ['user_id', 'order_date' ,'order_status'];
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function orderItems()
+    public function items()
     {
         return $this->hasMany(OrderItem::class);
     }
