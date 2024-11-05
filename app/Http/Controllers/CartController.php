@@ -1,84 +1,111 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Models\Order;
-use App\Models\OrderItem;
+use App\Http\Requests\AddToCartRequest;
+use App\Http\Requests\UpdateCartItemRequest;
+use App\Services\CartService;
+use App\Exceptions\ItemNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
-    public function addToCart(Request $request)
+    protected $cartService;
+
+    public function __construct(CartService $cartService)
     {
-        $validated = $request->validate([
-            'drug_id' => 'required|exists:drugs,id',
-            'quantity' => 'required|integer|min:1',
-            'price' => 'required|numeric',
-        ]);
-
-        $order = Order::firstOrCreate(
-            ['user_id' => Auth::id(), 'order_status' => 'pending'],
-            ['order_date' => now()]
-        );
-
-        OrderItem::updateOrCreate(
-            ['order_id' => $order->id, 'drug_id' => $validated['drug_id']],
-            ['quantity' => $validated['quantity'], 'price' => $validated['price']]
-        );
-
-        return redirect()->route('cart.view')->with('success', 'Item added to cart successfully!');
+        $this->cartService = $cartService;
+        $this->middleware('auth');
     }
 
-    public function viewCart()
+    public function addToCart(AddToCartRequest $request)
     {
-        $order = Order::with('items.drug') // eager loading drug relation
-                      ->where('user_id', Auth::id())
-                      ->where('order_status', 'pending')
-                      ->first();
-
-        // Calculate subtotal
-        $subtotal = $order ? $order->items->sum(function ($item) {
-            return $item->price * $item->quantity;
-        }) : 0;
-
-        return view('websitelayout.cart', compact('order', 'subtotal'));
+        try {
+            $validatedData = $request->validated();
+            $validatedData['user_id'] = $request->user()->id;
+            $item = $this->cartService->addItem($validatedData);
+            return response()->json(['message' => 'Item added to cart successfully.']);
+        } catch (\Exception $e) {
+            Log::error('Error adding item to cart: ' . $e->getMessage());
+            return response()->json(['message' => 'Error adding item to cart: ' . $e->getMessage()], 500);
+        }
     }
 
-    public function updateCart(Request $request, $itemId)
+    public function viewCart(Request $request)
+    {
+        try {
+            $order = $this->cartService->getCurrentOrder($request->user()->id);
+            
+            $totals = Cache::remember("cart_totals_{$order->id}", now()->addMinutes(5), function () use ($order) {
+                return $this->cartService->calculateTotals($order);
+            });
+
+            return view('websitelayout.cart', compact('order', 'totals'));
+        } catch (\Exception $e) {
+            Log::error('Error viewing cart: ' . $e->getMessage());
+            return redirect()->route('home')->with('error', 'Unable to view cart. Please try again.');
+        }
+    }
+
+    public function updateItem(UpdateCartItemRequest $request, $itemId)
 {
-    $validated = $request->validate([
-        'quantity' => 'required|integer|min:1',
-    ]);
+    try {
+        $validatedData = $request->validated();
+        $validatedData['user_id'] = $request->user()->id;
+        $validatedData['item_id'] = $itemId;
 
-    // Ensure the item exists
-    $orderItem = OrderItem::findOrFail($itemId);
-    $orderItem->update(['quantity' => $validated['quantity']]);
+        $item = $this->cartService->updateItem($validatedData);
+        
+        // Recalculate totals
+        $order = $this->cartService->getCurrentOrder($request->user()->id);
+        $totals = $this->cartService->calculateTotals($order);
 
-    return redirect()->route('cart.view')->with('success', 'Cart updated successfully!');
+        return redirect('cart.view');
+    } catch (ItemNotFoundException $e) {
+        return response()->json(['message' => $e->getMessage()], 404);
+    } catch (\Exception $e) {
+        Log::error('Error updating cart item: ' . $e->getMessage());
+        return response()->json(['message' => 'An error occurred while updating the cart'], 500);
+    }
 }
 
 
-    public function removeItem($itemId)
+    public function removeItem(Request $request, $itemId)
     {
-        $orderItem = OrderItem::withTrashed()->find($itemId);
-        
-        if ($orderItem) {
-            Log::info('Removing item with ID: ' . $itemId);
-            $orderItem->forceDelete();
-            Log::info('Item removed successfully.');
-            return redirect()->route('cart.view')->with('success', 'Item removed from cart successfully!');
-        } else {
-            Log::warning('Item not found with ID: ' . $itemId);
-            return redirect()->route('cart.view')->with('error', 'Item not found.');
+        try {
+            $this->cartService->removeItem($itemId, $request->user()->id);
+            Cache::forget("cart_totals_{$request->user()->id}");
+            return response()->json(['message' => 'Item removed from cart successfully.']);
+        } catch (ItemNotFoundException $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        } catch (\Exception $e) {
+            Log::error('Error removing item from cart: ' . $e->getMessage());
+            return response()->json(['message' => 'Unable to remove item from cart. Please try again.'], 500);
         }
     }
-    public function clearCart()
+
+    public function clearCart(Request $request)
     {
-        $order = Order::where('user_id', Auth::id())->where('order_status', 'pending')->first();
-        if ($order) {
-            $order->items()->delete(); // remove all items
+        try {
+            $this->cartService->clearCart($request->user()->id);
+            Cache::forget("cart_totals_{$request->user()->id}");
+            return response()->json(['message' => 'Cart cleared successfully.']);
+        } catch (\Exception $e) {
+            Log::error('Error clearing cart: ' . $e->getMessage());
+            return response()->json(['message' => 'Unable to clear cart. Please try again.'], 500);
         }
-        return redirect()->route('cart.view')->with('success', 'Cart cleared successfully!');
+    }
+
+    public function getCartCount(Request $request)
+    {
+        try {
+            $count = $this->cartService->getCartItemCount($request->user()->id);
+            return response()->json(['count' => $count]);
+        } catch (\Exception $e) {
+            Log::error('Error getting cart count: ' . $e->getMessage());
+            return response()->json(['message' => 'Unable to get cart count. Please try again.'], 500);
+        }
     }
 }

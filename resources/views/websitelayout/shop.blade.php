@@ -37,56 +37,87 @@
                     @endif
                     ${{ number_format($drug->drug_price, 2) }}
                 </p>
-                <button type="button" class="btn btn-primary add-to-cart" data-drug-id="{{ $drug->id }}" data-drug-price="{{ $drug->drug_price }}">Add to Cart</button>
+                <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form">
+                    @csrf
+                    <input type="hidden" name="drug_id" value="{{ $drug->id }}">
+                    <input type="number" name="quantity" value="1" min="1" max="10" class="form-control d-inline-block mb-2" style="width: 70px;">
+                    <button type="submit" class="btn btn-primary">Add to Cart</button>
+                </form>
             </div>
             @endforeach
         </div>
 
-        <!-- Pagination Links -->
         <div class="row mt-5">
             <div class="col-md-12 text-center">
                 <div class="site-block-27">
-                    {{ $drugs->links() }} <!-- This will generate the pagination links -->
+                    {{ $drugs->links() }}
                 </div>
             </div>
         </div>
     </div>
 </div>
+@endsection
 
-<!-- Include CSRF Token -->
-<meta name="csrf-token" content="{{ csrf_token() }}">
-
-<!-- JavaScript for AJAX Add to Cart functionality -->
+@push('scripts')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script>
-    $(document).ready(function() {
-        // Handle the Add to Cart button click event
-        $('.add-to-cart').on('click', function(e) {
-            e.preventDefault();
+$(document).ready(function() {
+    console.log('Document ready');
 
-            let drugId = $(this).data('drug-id'); // Get drug ID from data attribute
-            let price = $(this).data('drug-price'); // Get price from data attribute
-            let token = $("meta[name='csrf-token']").attr('content'); // CSRF token
+    // Use event delegation for dynamically added elements
+    $(document).on('click', '.add-to-cart-btn', function(e) {
+        e.preventDefault();
+        console.log('Add to cart button clicked');
+        
+        var form = $(this).closest('form');
+        var addToCartBtn = $(this);
+        addToCartBtn.prop('disabled', true).text('Adding...');
 
-            $.ajax({
-                url: "{{ route('cart.add') }}",
-                type: "POST",
-                data: {
-                    _token: token,
-                    drug_id: drugId,
-                    quantity: 1, // Default quantity of 1
-                    price: price // Pass the price as well
-                },
-                success: function(response) {
-                    // Display success message to user (could be a modal or notification)
-                    alert(response.message); // Modify this as needed for better UX
-                },
-                error: function(xhr) {
-                    console.error(xhr.responseText); // Log error for debugging
-                    alert('Error adding item to cart'); // Consider more user-friendly error handling
-                }
-            });
+        $.ajax({
+            url: form.attr('action'),
+            method: 'POST',
+            data: form.serialize(),
+            dataType: 'json',
+            success: function(response) {
+                console.log('Success:', response);
+                showNotification('success', response.message);
+                updateCartCount();
+            },
+            error: function(xhr, status, error) {
+                console.log('Error:', xhr.responseText);
+                showNotification('error', 'Error adding item to cart. Please try again.');
+            },
+            complete: function() {
+                addToCartBtn.prop('disabled', false).text('Add to Cart');
+            }
         });
     });
+
+    function showNotification(type, message) {
+        var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+        var notification = $('<div class="alert ' + alertClass + ' alert-dismissible fade show" role="alert">' +
+                                message +
+                                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                                    '<span aria-hidden="true">&times;' +
+                                '</button>' +
+                            '</div>');
+        
+        $('.container').first().prepend(notification);
+        
+        setTimeout(function() {
+            notification.alert('close');
+        }, 5000);
+    }
+
+    function updateCartCount() {
+        $.get('/cart/count', function(data) {
+            $('#cart-count').text(data.count);
+        });
+    }
+
+    // ... (rest of your JavaScript code) ...
+});
 </script>
-@endsection
+@endpush

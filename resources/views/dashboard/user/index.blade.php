@@ -1,71 +1,85 @@
 @extends('dashboard.layout.side')
 
 @section('content')
-<div class="w-full mt-12 p-6 bg-white rounded-lg shadow-lg">
-    <h2 class="text-2xl font-semibold text-gray-800 pb-4 flex items-center">
-        <i class="fas fa-users mr-3"></i> Users
-    </h2>
-
-    <!-- Button to Create New User -->
-    <div class="mb-4">
-        <a href="{{ route('dashboard.user.create') }}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Add User
+<div class="container mx-auto px-4 sm:px-8 py-8">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4 md:mb-0">Users</h2>
+        <a href="{{ route('dashboard.user.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+            <i class="fas fa-plus mr-2"></i>Add New User
         </a>
     </div>
 
-    <div class="overflow-x-auto">
-        <table class="min-w-full leading-normal">
-            <thead>
-                <tr>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Role</th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Created at</th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">email</th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($users as $user)
-                <tr>
-                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 w-10 h-10">
-                                <img class="w-full h-full rounded-full"
-                                     src="https://via.placeholder.com/160"
-                                     alt="User Image" />
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created at</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @foreach($users as $user)
+                    <tr class="hover:bg-gray-50 transition-colors duration-200">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <img class="h-10 w-10 rounded-full" src="https://via.placeholder.com/160" alt="User Image">
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
+                                </div>
                             </div>
-                            <div class="ml-3">
-                                <p class="text-gray-900 whitespace-no-wrap">{{ $user->name }}</p>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ $user->is_admin ? 'Admin' : 'User' }}</td>
-                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ $user->created_at->format('M d, Y') }}</td>
-                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ $user->email }}</td>
-
-                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm flex space-x-2">
-                        <a href="{{ route('dashboard.user.edit', $user->id) }}" class="text-blue-500 hover:text-blue-700"><i class="fas fa-edit"></i></a>
-                        <button type="button" class="text-red-500 hover:text-red-700" onclick="openDeleteModal({{ $user->id }})"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->is_admin ? 'Admin' : 'User' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->created_at->format('M d, Y') }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->email }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="{{ route('dashboard.user.edit', $user->id) }}" class="text-blue-600 hover:text-blue-900 mr-3" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button type="button" class="text-red-600 hover:text-red-900" onclick="openDeleteModal({{ $user->id }})" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
-    <div class="mt-6">
+    <div class="mt-4">
         {{ $users->links() }}
     </div>
 </div>
 
 <!-- Delete Confirmation Modal -->
-<div id="deleteModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-50">
-    <div class="bg-white rounded-lg overflow-hidden shadow-lg w-1/3">
-        <div class="p-6">
-            <h3 class="text-lg font-semibold">Delete User</h3>
-            <p>Are you sure you want to delete this user?</p>
-            <div class="mt-4 flex justify-end">
-                <button id="confirmDelete" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
-                <button onclick="closeDeleteModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded ml-2">Cancel</button>
+<div id="deleteModal" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Delete User</h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">Are you sure you want to delete this user? This action cannot be undone.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button type="button" id="confirmDelete" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">Delete</button>
+                <button type="button" onclick="closeDeleteModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">Cancel</button>
             </div>
         </div>
     </div>
@@ -75,12 +89,12 @@
     let deleteId;
 
     function openDeleteModal(id) {
-        deleteId = id; // Store the user ID for deletion
-        document.getElementById('deleteModal').classList.remove('hidden'); // Show the modal
+        deleteId = id;
+        document.getElementById('deleteModal').classList.remove('hidden');
     }
 
     function closeDeleteModal() {
-        document.getElementById('deleteModal').classList.add('hidden'); // Hide the modal
+        document.getElementById('deleteModal').classList.add('hidden');
     }
 
     document.getElementById('confirmDelete').addEventListener('click', function() {
@@ -101,7 +115,7 @@
         form.appendChild(methodInput);
 
         document.body.appendChild(form);
-        form.submit(); 
+        form.submit();
     });
 </script>
 

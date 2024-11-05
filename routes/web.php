@@ -11,12 +11,14 @@ use App\Http\Controllers\ChartsController;
 use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 
-// Admin middleware protected routes
+
+
 Route::middleware(['auth', 'admin.access'])->group(function () {
 
-    
-    
+
+
     // Dashboard route
     Route::get('/dashboard', [ChartsController::class, 'index'])->name('dashboard');
 
@@ -72,16 +74,15 @@ Route::middleware(['auth', 'admin.access'])->group(function () {
     });
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/dashboard/orders', [OrderItemController::class, 'index'])->name('dashboard.orders.index');
-
 });
 
 
-    Route::get('/', function () {
-        return view('landing');
-    })->name('home');
-    
+Route::get('/', function () {
+    return view('landing');
+})->name('home');
 
-    Route::get('/shop', [ShopController::class, 'index'])->name('websitelayout.Shop');
+
+Route::get('/shop', [ShopController::class, 'index'])->name('websitelayout.Shop');
 Auth::routes();
 
 
@@ -90,11 +91,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/pharmacy/store', [PharmacyInfoFormController::class, 'store'])->name('pharmacy.store');
 });
 
-
 Route::middleware(['auth'])->group(function () {
     Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
     Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
-    Route::patch('/cart/update/{item}', [CartController::class, 'updateCart'])->name('cart.update'); // Make sure this is correct
-    Route::post('/cart/remove/{itemId}', [CartController::class, 'removeItem'])->name('cart.remove');
+    Route::patch('/cart/{itemId}', [CartController::class, 'updateItem'])->name('cart.update');
+    Route::delete('/cart/{itemId}', [CartController::class, 'removeItem'])->name('cart.remove');
     Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('cart.clear');
+    Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+
 });

@@ -1,125 +1,156 @@
 @extends('dashboard.layout.side')
 
 @section('content')
-<div class="w-full max-w-7xl mx-auto mt-12 p-6 bg-white rounded-lg shadow-lg">
-
-    <h2 class="text-2xl font-semibold text-gray-800 pb-4 flex items-center">
-        <i class="fas fa-pills mr-3"></i> Drugs
-    </h2>
-
-    @if (session('success'))
-        <div class="mb-4 text-green-600">{{ session('success') }}</div>
-    @endif
-
-    <!-- Add New Drug Button -->
-    <a href="{{ route('dashboard.drug.create') }}" class="mb-4 inline-block bg-blue-800 hover:bg-blue-700 text-white font-semibold rounded-md px-4 py-2 transition duration-200">
-        Add New Drug
-    </a>
-
-    <!-- Drugs Table -->
-    <div id="drugsTable" class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">ID</th>
-                    <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Name</th>
-                    <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Description</th>
-                    <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Quantity</th>
-                    <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Price</th>
-                    <th class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                @forelse ($drugs as $drug)
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ $drug->id }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ $drug->drug_name }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ $drug->drug_description }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ $drug->drug_quantity }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${{ number_format($drug->drug_price, 2) }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                        <!-- View Button with Icon -->
-                        <a href="{{ route('dashboard.drug.show', $drug->id) }}" class="text-blue-600 hover:text-blue-800">
-                            <i class="fas fa-eye"></i> 
-                        </a>
-                        <!-- Edit Button with Icon -->
-                        <a href="{{ route('dashboard.drug.edit', $drug->id) }}" class="text-blue-600 hover:text-blue-800 mx-2">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <!-- Delete Button with Icon -->
-                        <button class="text-red-600 hover:text-red-800" onclick="openDeleteModal({{ $drug->id }})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="6" class="py-2 px-4 text-center text-sm text-gray-600">No drugs found.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-    
-    <div class="mt-6">
-        {{ $drugs->links() }} 
+<div class="container mx-auto px-4 sm:px-8 py-8">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4 md:mb-0">Drug Inventory</h2>
+        <a href="{{ route('dashboard.drug.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+            <i class="fas fa-plus mr-2"></i>Add New Drug
+        </a>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg shadow-lg p-6 w-11/12 sm:w-1/3">
-            <h3 class="text-lg font-semibold">Delete Confirmation</h3>
-            <p class="mt-2">Are you sure you want to delete this drug entry?</p>
-            <div class="mt-4 flex justify-end">
-                <button class="bg-gray-300 hover:bg-gray-400 text-black rounded-lg px-4 py-2" onclick="closeDeleteModal()">Cancel</button>
-                <button id="confirmDelete" class="bg-red-800 hover:bg-red-700 text-white rounded-lg px-4 py-2 ml-2">Delete</button>
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Drug Name
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Description
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Quantity
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Price
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @foreach($drugs as $drug)
+                    <tr class="hover:bg-gray-50 transition-colors duration-200">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {{ $drug->drug_name }}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+                            {{ $drug->drug_description }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ $drug->drug_quantity }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            ${{ number_format($drug->drug_price, 2) }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="{{ route('dashboard.drug.edit', $drug->id) }}" class="text-blue-600 hover:text-blue-900 mr-3" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button type="button" class="text-red-600 hover:text-red-900" onclick="openDeleteModal({{ $drug->id }})" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <i class="fas fa-exclamation-triangle text-red-600"></i>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                            Delete Drug
+                        </h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">
+                                Are you sure you want to delete this drug? This action cannot be undone.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button id="confirmDelete" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    Delete
+                </button>
+                <button type="button" onclick="closeDeleteModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    Cancel
+                </button>
             </div>
         </div>
     </div>
-
-    <script>
-        let deleteId;
-
-        function openDeleteModal(id) {
-            deleteId = id; // Store the drug ID for deletion
-            document.getElementById('deleteModal').classList.remove('hidden'); // Show the modal
-        }
-
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').classList.add('hidden'); // Hide the modal
-        }
-
-        // Handle deletion when the confirm button is clicked
-        document.getElementById('confirmDelete').addEventListener('click', function() {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '{{ route("dashboard.drug.destroy", ":id") }}'.replace(':id', deleteId);
-
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = '_token';
-            csrfInput.value = '{{ csrf_token() }}'; // CSRF Token for security
-            form.appendChild(csrfInput);
-
-            const methodInput = document.createElement('input');
-            methodInput.type = 'hidden';
-            methodInput.name = '_method';
-            methodInput.value = 'DELETE'; // Specify the method for deletion
-            form.appendChild(methodInput);
-
-            document.body.appendChild(form);
-            form.submit(); // Submit the form to delete the drug
-        });
-
-        // Toggle visibility of the drugs table
-        document.getElementById('toggleContent').addEventListener('click', function() {
-            const table = document.getElementById('drugsTable');
-            if (table.classList.contains('hidden')) {
-                table.classList.remove('hidden');
-            } else {
-                table.classList.add('hidden');
-            }
-        });
-    </script>
 </div>
+
+<script>
+    let deleteId;
+
+    function openDeleteModal(id) {
+        deleteId = id;
+        document.getElementById('deleteModal').classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+    }
+
+    document.getElementById('confirmDelete').addEventListener('click', function() {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ route("dashboard.drug.destroy", ":id") }}'.replace(':id', deleteId);
+
+        const csrfInput = document.createElement('input');  
+        csrfInput.type = 'hidden';
+        csrfInput.name = '_token';
+        csrfInput.value = '{{ csrf_token() }}';
+        form.appendChild(csrfInput);
+
+        const methodInput = document.createElement('input');
+        methodInput.type = 'hidden';
+        methodInput.name = '_method';
+        methodInput.value = 'DELETE';
+        form.appendChild(methodInput);
+
+        document.body.appendChild(form);
+
+        // Add error handling
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    console.error('Delete failed');
+                    alert('Failed to delete the category. Please try again.');
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        });
+
+        form.submit();
+    });
+</script>
 @endsection

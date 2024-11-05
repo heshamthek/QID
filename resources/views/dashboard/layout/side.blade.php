@@ -14,6 +14,10 @@
     <!-- Alpine.js -->
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
     
+    <!-- Your compiled JavaScript (includes Turbolinks) -->
+    <script src="{{ mix('js/app.js') }}" defer></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
         
@@ -43,8 +47,7 @@
                     <input type="text" class="w-full py-2 pl-10 pr-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors duration-300" placeholder="Search...">
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3">
                         <svg class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none">
-                            <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                        </svg>
+                             </svg>
                     </div>
                 </div>
             </div>
@@ -165,9 +168,20 @@
         @csrf
     </form>
 
-    <!-- Additional Scripts -->
+    <!-- Turbolinks-specific script -->
     <script>
-        // You can add any additional JavaScript here
+        document.addEventListener("turbolinks:load", function() {
+            // This function will run on the initial page load
+            // and after every Turbolinks navigation
+            console.log("Page loaded with Turbolinks!");
+
+            // Re-initialize Alpine.js components if needed
+            if (window.Alpine) {
+                window.Alpine.start();
+            }
+
+            // Add any other initialization code here
+        });
     </script>
 </body>
 </html>

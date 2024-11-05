@@ -5,7 +5,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12 mb-0">
-                <a href="{{ route('home') }}">Home</a> <span class="mx-2 mb-0">/</span> 
+                <a href="{{ route('home') }}">Home</a> <span class="mx-2 mb-0">/ 
                 <strong class="text-black">Cart</strong>
             </div>
         </div>
@@ -14,13 +14,19 @@
 
 <div class="site-section">
     <div class="container">
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+        @if(session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+
         <div class="row mb-5">
-            <form class="col-md-12 mb-3" method="POST" action="{{ route('cart.clear') }}">
+            <form class="col-md-12" method="POST" action="{{ route('cart.clear') }}">
                 @csrf
-                <button type="submit" class="btn btn-danger">Clear Cart</button>
+                <button type="submit" class="btn btn-primary btn-sm mb-3">Clear Cart</button>
             </form>
-            <form class="col-md-12" method="POST" action="#">
-                @csrf
+            <div class="col-md-12">
                 <div class="site-blocks-table">
                     <table class="table table-bordered">
                         <thead>
@@ -34,8 +40,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if ($order && $order->items->count())
-                                @foreach($order->items as $item)
+                            @forelse($order->items as $item)
                                 <tr>
                                     <td class="product-thumbnail">
                                         <img src="{{ asset('storage/' . $item->drug->image_path) }}" alt="{{ $item->drug->name }}" class="img-fluid" style="width: 100px; height: auto;">
@@ -45,51 +50,35 @@
                                     </td>
                                     <td>${{ number_format($item->price, 2) }}</td>
                                     <td>
-                                        <form action="{{ route('cart.update', $item->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('PATCH') <!-- This line is crucial for simulating the PATCH request -->
-                                            <input type="number" name="quantity" value="{{ $item->quantity }}" min="1">
-                                            <button type="submit">Update</button>
-                                        </form>                                   
+                                        <input type="number" class="form-control cart-quantity-input" 
+                                               value="{{ $item->quantity }}" min="1" 
+                                               data-item-id="{{ $item->id }}">
                                     </td>
                                     <td>${{ number_format($item->price * $item->quantity, 2) }}</td>
                                     <td>
-                                        <form action="{{ route('cart.remove', $item->id) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('cart.remove', $item->id) }}" method="POST">
                                             @csrf
-                                            @method('POST')
-                                            <button type="submit" class="btn btn-danger btn-sm">X</button>
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-primary btn-sm">X</button>
                                         </form>
                                     </td>
                                 </tr>
-                                @endforeach
-                            @else
+                            @empty
                                 <tr>
                                     <td colspan="6" class="text-center">Your cart is empty.</td>
                                 </tr>
-                            @endif
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
-            </form>
+            </div>
         </div>
 
         <div class="row">
             <div class="col-md-6">
                 <div class="row mb-5">
                     <div class="col-md-6 mb-3 mb-md-0">
-                        <a href="{{ route('home') }}" class="btn btn-outline-primary btn-md btn-block">Continue Shopping</a>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <label class="text-black h4" for="coupon">Coupon</label>
-                        <p>Enter your coupon code if you have one.</p>
-                    </div>
-                    <div class="col-md-8 mb-3 mb-md-0">
-                        <input type="text" class="form-control py-3" id="coupon" placeholder="Coupon Code">
-                    </div>
-                    <div class="col-md-4">
-                        <button class="btn btn-primary btn-md px-4">Apply Coupon</button>
+                        <a href="{{ route('home') }}" class="btn btn-outline-primary btn-sm btn-block">Continue Shopping</a>
                     </div>
                 </div>
             </div>
@@ -103,24 +92,27 @@
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <span class="text-black">Subtotal</span>
+                                <span class="text-black">Subtotal
                             </div>
                             <div class="col-md-6 text-right">
-                                <strong class="text-black">${{ number_format($subtotal, 2) }}</strong>
+                                <strong class="text-black">${{ number_format($totals['subtotal'], 2) }}</strong>
                             </div>
                         </div>
                         <div class="row mb-5">
                             <div class="col-md-6">
-                                <span class="text-black">Total</span>
+                                <span class="text-black">Total
                             </div>
                             <div class="col-md-6 text-right">
-                                <strong class="text-black">${{ number_format($subtotal, 2) }}</strong>
+                                <strong class="text-black">${{ number_format($totals['total'], 2) }}</strong>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
-                                <a href="#" class="btn btn-primary btn-lg btn-block">Proceed To Checkout</a>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <a href="{{ route('checkout') }}" class="btn btn-primary btn-lg btn-block">Proceed To Checkout</a>
+                                </div>
                             </div>
+                            
                         </div>
                     </div>
                 </div>
@@ -128,27 +120,50 @@
         </div>
     </div>
 </div>
-
-<div class="site-section bg-secondary bg-image" style="background-image: url('images/bg_2.jpg');">
-    <div class="container">
-        <div class="row align-items-stretch">
-            <div class="col-lg-6 mb-5 mb-lg-0">
-                <a href="#" class="banner-1 h-100 d-flex" style="background-image: url('images/bg_1.jpg');">
-                    <div class="banner-1-inner align-self-center">
-                        <h2>Pharma Products</h2>
-                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestiae ex ad minus rem odio voluptatem.</p>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-6 mb-5 mb-lg-0">
-                <a href="#" class="banner-1 h-100 d-flex" style="background-image: url('images/bg_2.jpg');">
-                    <div class="banner-1-inner ml-auto align-self-center">
-                        <h2>Rated by Experts</h2>
-                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestiae ex ad minus rem odio voluptatem.</p>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+    $('.cart-quantity-input').on('change', function() {
+        var itemId = $(this).data('item-id');
+        var quantity = $(this).val();
+        updateCartItem(itemId, quantity);
+    });
+
+    function updateCartItem(itemId, quantity) {
+        $.ajax({
+            url: `/cart/${itemId}`,
+            method: 'PATCH',
+            data: {
+                _token: '{{ csrf_token() }}',
+                quantity: quantity
+            },
+            success: function(response) {
+                showNotification('success', response.message);
+                location.reload(); // Reload the page to reflect changes
+            },
+            error: function(xhr) {
+                showNotification('error', 'Error updating cart item. Please try again.');
+            }
+        });
+    }
+
+    function showNotification(type, message) {
+        var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+        var notification = $('<div class="alert ' + alertClass + ' alert-dismissible fade show" role="alert">' +
+                                message +
+                                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                                    '<span aria-hidden="true">&times;' +
+                                '</button>' +
+                            '</div>');
+        
+        $('.container').first().prepend(notification);
+        
+        setTimeout(function() {
+            notification.alert('close');
+        }, 5000);
+    }
+});
+</script>
+@endpush
