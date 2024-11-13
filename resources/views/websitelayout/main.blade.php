@@ -48,31 +48,18 @@
                 <li class="active"><a href="{{route('home')}}">Home</a></li>
                 <li><a href="{{route('websitelayout.Shop')}}">Store</a></li>
                 <li class="has-children">
-                  <a href="#">Dropdown</a>
-                  <ul class="dropdown">
-                    <li><a href="#">Supplements</a></li>
-                    <li class="has-children">
-                      <a href="#">Vitamins</a>
-                      <ul class="dropdown">
-                        <li><a href="#">Supplements</a></li>
-                        <li><a href="#">Vitamins</a></li>
-                        <li><a href="#">Diet &amp; Nutrition</a></li>
-                        <li><a href="#">Tea &amp; Coffee</a></li>
-                      </ul>
-                    </li>
-                    <li><a href="#">Diet &amp; Nutrition</a></li>
-                    <li><a href="#">Tea &amp; Coffee</a></li>
+                  
+                 
+                    
                     
                   </ul>
                 </li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="contact.html">Contact</a></li>
               </ul>
             </nav>
           </div>
           <div class="icons">
             <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
-            <a href="cart.html" class="icons-btn d-inline-block bag">
+            <a href={{route('cart.view')}} class="icons-btn d-inline-block bag">
               <span class="icon-shopping-bag"></span>
               <span class="number">2</span>
             </a>

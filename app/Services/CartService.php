@@ -95,8 +95,29 @@ class CartService
         $order->update(['total' => $total]);
     }
 
+   
+// app/Services/CartService.php
+
+public function removeItem($itemId, $userId)
+{
+    try {
+        $order = $this->getCurrentOrder($userId);
+        $item = $order->items()->where('id', $itemId)->first();
+
+        if (!$item) {
+            throw new ItemNotFoundException('Item not found in cart');
+        }
+
+        $item->delete();
+
+        $this->updateOrderTotal($order);
+
+        return true;
+    } catch (\Exception $e) {
+        Log::error('Error removing item from cart: ' . $e->getMessage());
+        throw $e;
+    }
+}
 
 
-
-    // ... other methods ...
 }

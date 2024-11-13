@@ -66,7 +66,6 @@
 $(document).ready(function() {
     console.log('Document ready');
 
-    // Use event delegation for dynamically added elements
     $(document).on('click', '.add-to-cart-btn', function(e) {
         e.preventDefault();
         console.log('Add to cart button clicked');
@@ -117,7 +116,6 @@ $(document).ready(function() {
         });
     }
 
-    // ... (rest of your JavaScript code) ...
 });
 </script>
 @endpush

@@ -26,7 +26,8 @@ class CartController extends Controller
             $validatedData = $request->validated();
             $validatedData['user_id'] = $request->user()->id;
             $item = $this->cartService->addItem($validatedData);
-            return response()->json(['message' => 'Item added to cart successfully.']);
+            // Redirect to shop after adding item to cart
+            return redirect('shop');
         } catch (\Exception $e) {
             Log::error('Error adding item to cart: ' . $e->getMessage());
             return response()->json(['message' => 'Error adding item to cart: ' . $e->getMessage()], 500);
@@ -50,34 +51,34 @@ class CartController extends Controller
     }
 
     public function updateItem(UpdateCartItemRequest $request, $itemId)
-{
-    try {
-        $validatedData = $request->validated();
-        $validatedData['user_id'] = $request->user()->id;
-        $validatedData['item_id'] = $itemId;
+    {
+        try {
+            $validatedData = $request->validated();
+            $validatedData['user_id'] = $request->user()->id;
+            $validatedData['item_id'] = $itemId;
 
-        $item = $this->cartService->updateItem($validatedData);
-        
-        // Recalculate totals
-        $order = $this->cartService->getCurrentOrder($request->user()->id);
-        $totals = $this->cartService->calculateTotals($order);
+            $item = $this->cartService->updateItem($validatedData);
+            
+            // Recalculate totals
+            $order = $this->cartService->getCurrentOrder($request->user()->id);
+            $totals = $this->cartService->calculateTotals($order);
 
-        return redirect('cart.view');
-    } catch (ItemNotFoundException $e) {
-        return response()->json(['message' => $e->getMessage()], 404);
-    } catch (\Exception $e) {
-        Log::error('Error updating cart item: ' . $e->getMessage());
-        return response()->json(['message' => 'An error occurred while updating the cart'], 500);
+            // Redirect to cart after updating item
+            return redirect()->route('cart.view')->with('success', 'Cart updated successfully.');
+        } catch (ItemNotFoundException $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        } catch (\Exception $e) {
+            Log::error('Error updating cart item: ' . $e->getMessage());
+            return response()->json(['message' => 'An error occurred while updating the cart'], 500);
+        }
     }
-}
-
 
     public function removeItem(Request $request, $itemId)
     {
         try {
             $this->cartService->removeItem($itemId, $request->user()->id);
             Cache::forget("cart_totals_{$request->user()->id}");
-            return response()->json(['message' => 'Item removed from cart successfully.']);
+            return redirect('cart');
         } catch (ItemNotFoundException $e) {
             return response()->json(['message' => $e->getMessage()], 404);
         } catch (\Exception $e) {
@@ -91,7 +92,7 @@ class CartController extends Controller
         try {
             $this->cartService->clearCart($request->user()->id);
             Cache::forget("cart_totals_{$request->user()->id}");
-            return response()->json(['message' => 'Cart cleared successfully.']);
+            return response('cart');
         } catch (\Exception $e) {
             Log::error('Error clearing cart: ' . $e->getMessage());
             return response()->json(['message' => 'Unable to clear cart. Please try again.'], 500);

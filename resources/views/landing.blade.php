@@ -13,7 +13,7 @@
               <h2 class="sub-title">Effective Medicine, New Medicine Everyday</h2>
               <h1>Welcome To QID</h1>
               <p>
-                <a href="#" class="btn btn-primary px-5 py-3">Shop Now</a>
+                <a href={{route('websitelayout.Shop')}} class="btn btn-primary px-5 py-3">Shop Now</a>
               </p>
             </div>
           </div>
